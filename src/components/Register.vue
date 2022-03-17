@@ -87,7 +87,7 @@
 <script>
 
   import { ElNotification } from 'element-plus'
-  import axios from 'axios'
+  import { post } from '../utils/axios'
 
   export default {
     name: 'Register',
@@ -180,10 +180,9 @@
         formData.append('username', this.registerForm.username)
         formData.append('password', this.registerForm.password)
         formData.append('email', this.registerForm.email)
-        axios
-          .post('http://localhost:9195/user/register/toRegister', formData)
+        post('/user/register/toRegister', formData)
           .then(response => {
-            if (response.data.code === 200) {
+            if (response.code === 200) {
               ElNotification({
                 title: "成功注册",
                 message: "请查看邮件并激活账号!",
@@ -193,8 +192,8 @@
               this.$router.replace({path: '/Login'})
             } else {
               ElNotification({
-                title: "错误:" + response.data.code,
-                message: response.data.msg,
+                title: "错误:" + response.code,
+                message: response.msg,
                 type: 'error',
                 duration: 2000,
               })

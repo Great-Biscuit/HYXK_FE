@@ -70,7 +70,7 @@
 <script>
 
   import { ElNotification } from 'element-plus'
-  import axios from 'axios'
+  import { post } from '../utils/axios'
 
   export default {
     name: 'FindPassword',
@@ -179,9 +179,9 @@
 
         let formData = new FormData()
         formData.append('email', this.findPasswordForm.email)
-        axios.post('http://localhost:9195/user/login/getVerificationCode', formData)
+        post('/user/login/getVerificationCode', formData)
           .then(response => {
-            if (response.data.code === 200) {
+            if (response.code === 200) {
               ElNotification({
                 title: "成功发送",
                 message: "成功发送验证码, 请注意查收!",
@@ -190,8 +190,8 @@
               })
             } else {
               ElNotification({
-                title: "错误: " + response.data.code,
-                message: response.data.msg,
+                title: "错误: " + response.code,
+                message: response.msg,
                 type: 'error',
                 duration: 2000,
               })
@@ -211,9 +211,9 @@
         formData.append('email', this.findPasswordForm.email)
         formData.append('code', this.findPasswordForm.code)
         formData.append('password', this.findPasswordForm.password)
-        axios.post('http://localhost:9195/user/login/findPassword', formData)
+        post('/user/login/findPassword', formData)
           .then(response => {
-            if (response.data.code === 200) {
+            if (response.code === 200) {
               ElNotification({
                 title: "成功",
                 message: "成功修改密码!",
@@ -223,8 +223,8 @@
               this.$router.replace({path: '/Login'})
             } else {
               ElNotification({
-                title: "错误: " + response.data.code,
-                message: response.data.msg,
+                title: "错误: " + response.code,
+                message: response.msg,
                 type: 'error',
                 duration: 2000,
               })

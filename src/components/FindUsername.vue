@@ -38,7 +38,7 @@
 <script>
 
   import { ElNotification } from 'element-plus'
-  import axios from 'axios'
+  import { post } from '../utils/axios'
 
   export default {
     name: 'FindUsername',
@@ -72,9 +72,9 @@
       sendEmail () {
         let formData = new FormData()
         formData.append('email', this.findUsernameForm.email)
-        axios.post('http://localhost:9195/user/login/findUsername', formData)
+        post('/user/login/findUsername', formData)
           .then(response => {
-            if (response.data.code === 200) {
+            if (response.code === 200) {
               ElNotification({
                 title: "成功发送",
                 message: "成功发送邮件, 请注意查收!",
@@ -84,8 +84,8 @@
               this.$router.replace({path: '/Login'})
             } else {
               ElNotification({
-                title: "错误: " + response.data.code,
-                message: response.data.msg,
+                title: "错误: " + response.code,
+                message: response.msg,
                 type: 'error',
                 duration: 2000,
               })

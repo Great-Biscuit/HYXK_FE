@@ -72,7 +72,7 @@
 <script>
 
   import { ElNotification } from 'element-plus'
-  import axios from 'axios'
+  import { post } from '../utils/axios'
 
   export default {
     name: 'Login',
@@ -89,14 +89,14 @@
         f.append('username',this.username)
         f.append('password', this.password)
         f.append('rememberMe', this.rememberMe)
-        axios.post('http://localhost:9195/user/login/verify', f)
+        post('/user/login/verify', f)
           .then(response => {
-            if (response.data.code === 200) {
-              this.$router.replace({path: '/HelloWorld'})
+            if (response.code === 200) {
+              this.$router.replace({path: '/Home'})
             } else {
               ElNotification({
-                title: "错误: " + response.data.code,
-                message: response.data.msg,
+                title: "错误: " + response.code,
+                message: response.msg,
                 type: 'error',
                 duration: 2000,
               })
