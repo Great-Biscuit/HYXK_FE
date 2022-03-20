@@ -1,11 +1,11 @@
 import { createRouter, createWebHistory } from "vue-router"
 
 //1. 定义要使用到的路由组件  （一定要使用文件的全名，得包含文件后缀名）
-import Home from '../components/Home.vue';
-import Login from '../components/Login.vue';
-import Register from '../components/Register.vue';
-import FindUsername from '../components/FindUsername.vue';
-import FindPassword from '../components/FindPassword.vue';
+import Home from '../components/home/Home.vue';
+import Login from '../components/login/Login.vue';
+import Register from '../components/register/Register.vue';
+import FindUsername from '../components/login/FindUsername.vue';
+import FindPassword from '../components/login/FindPassword.vue';
 
 //2. 路由配置
 const routes = [

@@ -71,59 +71,59 @@
 
 <script>
 
-  import { ElNotification } from 'element-plus'
-  import { post } from '../utils/axios'
+import { ElNotification } from 'element-plus'
+import { post } from '../../utils/axios'
 
-  export default {
-    name: 'Login',
-    data () {
-      return {
-        username: '',
-        password: '',
-        rememberMe: false
-      }
+export default {
+  name: 'Login',
+  data () {
+    return {
+      username: '',
+      password: '',
+      rememberMe: false
+    }
+  },
+  methods: {
+    login () {
+      var f = new FormData()
+      f.append('username',this.username)
+      f.append('password', this.password)
+      f.append('rememberMe', this.rememberMe)
+      post('/user/login/verify', f)
+        .then(response => {
+          if (response.code === 200) {
+            this.$router.replace({path: '/Home'})
+          } else {
+            ElNotification({
+              title: "错误: " + response.code,
+              message: response.msg,
+              type: 'error',
+              duration: 2000,
+            })
+          }
+        })
+        .catch(() => {
+            ElNotification({
+              title: "错误",
+              message: "发生错误!",
+              type: 'error',
+              duration: 2000,
+            })
+        })
     },
-    methods: {
-      login () {
-        var f = new FormData()
-        f.append('username',this.username)
-        f.append('password', this.password)
-        f.append('rememberMe', this.rememberMe)
-        post('/user/login/verify', f)
-          .then(response => {
-            if (response.code === 200) {
-              this.$router.replace({path: '/Home'})
-            } else {
-              ElNotification({
-                title: "错误: " + response.code,
-                message: response.msg,
-                type: 'error',
-                duration: 2000,
-              })
-            }
-          })
-          .catch(() => {
-              ElNotification({
-                title: "错误",
-                message: "发生错误!",
-                type: 'error',
-                duration: 2000,
-              })
-          })
-      },
-      // 跳到注册界面
-      toRegister () {
-        this.$router.replace({path: '/Register'})
-      },
-      // 忘记密码
-      passwordFind () {
-        this.$router.replace({path: '/FindPassword'})
-      },
-      // 忘记账号
-      usernameFind () {
-        this.$router.replace({path: '/FindUsername'})
-      }
+    // 跳到注册界面
+    toRegister () {
+      this.$router.replace({path: '/Register'})
+    },
+    // 忘记密码
+    passwordFind () {
+      this.$router.replace({path: '/FindPassword'})
+    },
+    // 忘记账号
+    usernameFind () {
+      this.$router.replace({path: '/FindUsername'})
     }
   }
+}
 </script>
 

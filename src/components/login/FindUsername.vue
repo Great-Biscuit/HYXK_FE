@@ -37,74 +37,74 @@
 
 <script>
 
-  import { ElNotification } from 'element-plus'
-  import { post } from '../utils/axios'
+import { ElNotification } from 'element-plus'
+import { post } from '../../utils/axios'
 
-  export default {
-    name: 'FindUsername',
-    data () {
-      // 邮箱格式
-      let emailReg = /^(\w-*\.*)+@(\w-?)+(\.\w{2,})+$/;
-      const validateEmail = (rule, value, callback) => {
-        if (value === '') {
-            callback(new Error('请输入邮箱!'));
-        } else {
-          // 验证邮箱合法性
-          if (!emailReg.test(value)) {
-            callback(new Error('请输入有效邮箱!'));
-          }
-          callback();
+export default {
+  name: 'FindUsername',
+  data () {
+    // 邮箱格式
+    let emailReg = /^(\w-*\.*)+@(\w-?)+(\.\w{2,})+$/;
+    const validateEmail = (rule, value, callback) => {
+      if (value === '') {
+          callback(new Error('请输入邮箱!'));
+      } else {
+        // 验证邮箱合法性
+        if (!emailReg.test(value)) {
+          callback(new Error('请输入有效邮箱!'));
         }
-      }
-      return {
-        findUsernameForm: {
-          email: ''
-        },
-        rules: {
-          email: [
-            {  message: '请输入邮箱', trigger: 'blur' },
-            { validator: validateEmail, trigger: 'blur' }
-          ],
-        }
-      }
-    },
-    methods: {
-      sendEmail () {
-        let formData = new FormData()
-        formData.append('email', this.findUsernameForm.email)
-        post('/user/login/findUsername', formData)
-          .then(response => {
-            if (response.code === 200) {
-              ElNotification({
-                title: "成功发送",
-                message: "成功发送邮件, 请注意查收!",
-                type: 'success',
-                duration: 2000,
-              })
-              this.$router.replace({path: '/Login'})
-            } else {
-              ElNotification({
-                title: "错误: " + response.code,
-                message: response.msg,
-                type: 'error',
-                duration: 2000,
-              })
-            }
-          })
-          .catch(() => {
-              ElNotification({
-                title: "错误",
-                message: "发生错误!",
-                type: 'error',
-                duration: 2000,
-              })
-          })
-      },
-      toLogin () {
-        this.$router.replace({path: '/Login'})
+        callback();
       }
     }
+    return {
+      findUsernameForm: {
+        email: ''
+      },
+      rules: {
+        email: [
+          {  message: '请输入邮箱', trigger: 'blur' },
+          { validator: validateEmail, trigger: 'blur' }
+        ],
+      }
+    }
+  },
+  methods: {
+    sendEmail () {
+      let formData = new FormData()
+      formData.append('email', this.findUsernameForm.email)
+      post('/user/login/findUsername', formData)
+        .then(response => {
+          if (response.code === 200) {
+            ElNotification({
+              title: "成功发送",
+              message: "成功发送邮件, 请注意查收!",
+              type: 'success',
+              duration: 2000,
+            })
+            this.$router.replace({path: '/Login'})
+          } else {
+            ElNotification({
+              title: "错误: " + response.code,
+              message: response.msg,
+              type: 'error',
+              duration: 2000,
+            })
+          }
+        })
+        .catch(() => {
+            ElNotification({
+              title: "错误",
+              message: "发生错误!",
+              type: 'error',
+              duration: 2000,
+            })
+        })
+    },
+    toLogin () {
+      this.$router.replace({path: '/Login'})
+    }
   }
+}
 </script>
 
 <style scoped>
