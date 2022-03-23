@@ -1,13 +1,15 @@
 <template>
   <el-row :gutter="20">
-    <el-col :span="8" v-on:click="toHome">
-      <i class="iconfont">&#xe6bb;</i>
+    <el-col :span="3">
+      <i class="iconfont">&#xe684;</i>
     </el-col>
-    <el-col :span="8">
-      <i class="iconfont">&#xe600;</i>
+    <el-col :span="3"></el-col>
+    <el-col :span="12" style="font-size : 120%;">主页</el-col>
+    <el-col :span="3">
+      <i class="iconfont">&#xe65c;</i>
     </el-col>
-    <el-col :span="8">
-      <i class="iconfont">&#xe607;</i>
+    <el-col :span="3">
+      <i class="iconfont">&#xe630;</i>
     </el-col>
   </el-row>
 </template>
@@ -15,7 +17,7 @@
 <script>
 
 export default {
-  name: 'Footer',
+  name: 'Header',
   components: {
   },
   data () {
@@ -24,10 +26,7 @@ export default {
     }
   },
   methods: {
-    // 跳到首页
-    toHome () {
-      this.$router.replace({path: '/Home'})
-    },
+    
   }
 }
 </script>
@@ -44,3 +43,4 @@ export default {
   font-size: 25px;
 }
 </style>
+

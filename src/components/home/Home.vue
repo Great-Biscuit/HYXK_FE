@@ -1,14 +1,22 @@
 <template>
   <el-container>
     <el-header>
-      Header
+      <Header/>
     </el-header>
     <el-main>
-      <div>
-        最新 热门
-      </div>
+      <el-menu
+        :default-active="activeIndex"
+        class="el-menu-demo"
+        mode="horizontal"
+        @select="handleSelect"
+      >
+        <el-menu-item index="1">最新</el-menu-item>
+        <el-menu-item index="0">热门</el-menu-item>
+      </el-menu>
       <ul v-infinite-scroll="load" class="infinite-list" style="overflow: auto">
-        <li v-for="i in count" :key="i" class="infinite-list-item">{{ i }}</li>
+        <li v-for="postVo in postList" :key="postVo" class="infinite-list-item">
+          <PostIntro :postVo="postVo" />
+        </li>
       </ul>
     </el-main>
     <el-footer>
@@ -20,18 +28,66 @@
 <script>
 
 import Footer from './Footer.vue'
+import Header from './Header.vue'
+import PostIntro from './PostIntro.vue'
+import { post } from '../../utils/axios'
+import { ElNotification } from 'element-plus'
 
 export default {
   name: 'Home',
   components: {
-    Footer
+    Header,
+    Footer,
+    PostIntro
   },
   data () {
-    
+    return {
+      activeIndex : "1",
+      count : 0,
+      postList : []
+    }
   },
   methods: {
     load () {
-      this.count += 2;
+      let formData = new FormData()
+      formData.append('userId', 0)
+      formData.append('type', this.activeIndex)
+      formData.append('offset', this.count)
+      formData.append('limit', 8)
+      formData.append('orderMode', 0)
+      post('/post-public/queryAll', formData)
+        .then(response => {
+          if (response.code === 200) {
+            // 每次取8条
+            this.postList.push(...response.data);
+            this.count += response.data.length;
+          } else {
+            ElNotification({
+              title: "错误: " + response.code,
+              message: response.msg,
+              type: 'error',
+              duration: 2000,
+            })
+          }
+        })
+        .catch(() => {
+            ElNotification({
+              title: "错误",
+              message: "发生错误!",
+              type: 'error',
+              duration: 2000,
+            })
+        })
+    },
+    handleSelect (index) {
+      // 重置数据
+      this.activeIndex = index;
+      this.count = 0;
+      this.postList = [];
+      // 把数据刷满屏, 不然不会触发自动加载
+      for (let i=0; i<5; i++){
+        this.load();
+      }
     }
   }
 }
@@ -45,27 +101,29 @@ export default {
   margin: -8px;
 }
 .el-header {
-  height: 6%;
-  background-color: #d9ecff;
+  height: 50px;
+  padding: 10px 20px;
 }
 .el-main {
-  height: 88%;
+  height: auto;
+  padding: 0;
+}
+.el-menu-demo {
+  height: 5%;
 }
 .el-footer {
-  height: 6%;
+  height: 50px;
+  padding: 10px 15px;
 }
 .infinite-list {
-  height: 90%;
+  height: 94%;
   padding: 0;
-  margin: 0;
   list-style: none;
+  margin: 1%;
 }
 .infinite-list .infinite-list-item {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 50px;
-  background: var(--el-color-primary-light-9);
+  height: 80px;
   margin: 10px;
   color: var(--el-color-primary);
 }
