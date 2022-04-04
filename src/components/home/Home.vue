@@ -107,6 +107,7 @@ export default {
 .el-main {
   height: auto;
   padding: 0;
+  overflow: hidden;
 }
 .el-menu-demo {
   height: 5%;
@@ -123,7 +124,7 @@ export default {
 }
 .infinite-list .infinite-list-item {
   display: flex;
-  height: 80px;
+  height: 120px;
   margin: 10px;
   color: var(--el-color-primary);
 }
