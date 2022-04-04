@@ -85,7 +85,7 @@ export default {
       this.count = 0;
       this.postList = [];
       // 把数据刷满屏, 不然不会触发自动加载
-      for (let i=0; i<5; i++){
+      for (let i=0; i<2; i++){
         this.load();
       }
     }
@@ -113,7 +113,7 @@ export default {
   height: 5%;
 }
 .el-footer {
-  height: 50px;
+  height: 49px;
   padding: 10px 15px;
 }
 .infinite-list {

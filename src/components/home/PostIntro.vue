@@ -1,19 +1,27 @@
 <template>
-  <el-card>
+  <el-card @click="detail">
     <div class="message">
-      <div class="postTitle">{{postVo.post.title}}</div>
+      <div class="postTitle">
+        <span v-if="postVo.post.official===1" class="iconfont" 
+          style="background-color: #ffa000;border-radius: 5px;font-weight:bold;font-size:24px;margin-right: 2px;">&#xe7e8;</span>
+        <span v-if="postVo.post.top===1" class="iconfont" 
+          style="background-color: #40bbff;border-radius: 50%;font-weight:bold;font-size:24px;margin-right: 2px;">&#xe672;</span>
+        <span :class="{'wonderful-title': postVo.post.state===1}">
+          {{postVo.post.title}}
+        </span>
+      </div>
       <div class="bottom">
         <div class="author">
           <el-avatar :size="24" :src="postVo.author.headerUrl" />
           <span class="nickname">{{postVo.author.nickname}}</span>
         </div>
         <div class="like">
-          <span class="iconfont like__icon"></span>
+          <span class="iconfont like__icon">&#xe71b;</span>
           <span class="like__count">{{postVo.likeCount / 10000 >= 1 ? ((postVo.likeCount / 10000).toFixed(1) + '万') : postVo.likeCount}}</span>
         </div>
-        <div class="collect">
-          <span class="iconfont collect__icon"></span>
-          <span class="collect__count">{{postVo.post.comments / 10000 >= 1 ? ((postVo.post.comments / 10000).toFixed(1) + '万') : postVo.post.comments}}</span>
+        <div class="comment">
+          <span class="iconfont comment__icon">&#xe741;</span>
+          <span class="comment__count">{{postVo.post.comments / 10000 >= 1 ? ((postVo.post.comments / 10000).toFixed(1) + '万') : postVo.post.comments}}</span>
         </div>
       </div>
     </div>
@@ -41,7 +49,9 @@ export default {
     }
   },
   methods: {
-    
+    detail () {
+      alert("跳转到帖子:"+this.postVo.post.id)
+    }
   }
 }
 </script>
@@ -62,7 +72,7 @@ export default {
   box-sizing: border-box;
 }
 .postTitle{
-  height: 70px;
+  height: 68px;
   font-size: 24px;
   margin-bottom: 10px;
   overflow: hidden;
@@ -81,7 +91,7 @@ export default {
   width: 115px;
   line-height: 22px;
 }
-.like,.collect{
+.like,.comment{
   width: 50px;
   line-height: 22px;
   box-sizing: border-box;
@@ -102,5 +112,8 @@ export default {
   height: 110px;
   width: 110px;
   margin-left: 5px;
+}
+.wonderful-title {
+  color: #007bff;
 }
 </style>
