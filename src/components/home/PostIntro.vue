@@ -50,7 +50,7 @@ export default {
   },
   methods: {
     detail () {
-      alert("跳转到帖子:"+this.postVo.post.id)
+      this.$router.replace({path: '/PostDetail/' + this.postVo.post.id})
     }
   }
 }

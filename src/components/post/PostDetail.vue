@@ -1,0 +1,177 @@
+<template>
+  <div class="box">
+    <div class="head">
+      <el-row :gutter="20">
+        <el-col :span="3" v-on:click="toHome">
+          <i class="iconfont">&#xe6bb;</i>
+        </el-col>
+        <el-col :span="18">帖子详情</el-col>
+        <el-col :span="3">
+          <i class="iconfont">&#xe612;</i>
+        </el-col>
+      </el-row>
+    </div>
+    <el-scrollbar>
+      <div class="post-info" v-if="postInfo != null">
+        <h2 style="margin: 10px;">{{ postInfo.post.title }}</h2>
+        <div class="author">
+          <el-avatar :size="39" :src="postInfo.author.headerUrl" />
+          <span class="nickname">{{postInfo.author.nickname}}</span>
+        </div>
+        <el-divider style="margin: 0;"></el-divider>
+        <div class="content" v-html="postInfo.post.htmlContent"></div>
+        <el-divider style="margin: 0;"></el-divider>
+        <div>
+          <el-row :gutter="20">
+            <el-col :span="6" v-on:click="toLike(1, postInfo.post.id, postInfo.author.id)">
+              <i class="iconfont" v-show="!postInfo.hasLike">&#xe669;</i>
+              <i class="iconfont" v-show="postInfo.hasLike" style="color:red;">&#xe668;</i>
+              {{ postInfo.likeCount }}
+            </el-col>
+            <el-col :span="3"><el-divider direction="vertical" /></el-col>
+            <el-col :span="6" v-on:click="toComment">
+              <i class="iconfont">&#xe741;</i>
+              {{ postInfo.post.comments }}
+            </el-col>
+            <el-col :span="3"><el-divider direction="vertical" /></el-col>
+            <el-col :span="6" v-on:click="toCollect(1, postInfo.post.id, postInfo.author.id)">
+              <i class="iconfont" v-show="!postInfo.hasCollect">&#xe64c;</i>
+              <i class="iconfont" v-show="postInfo.hasCollect" style="color:#ff9c00;">&#xe64b;</i>
+              {{ postInfo.collectCount }}
+            </el-col>
+          </el-row>
+        </div>
+        <el-divider style="margin: 0;"></el-divider>
+        <div class="comment">
+
+        </div>
+      </div>
+    </el-scrollbar>
+  </div>
+</template>
+
+<script>
+
+import { get } from '../../utils/axios'
+import { ElNotification } from 'element-plus'
+
+export default {
+  name: 'PostDetail',
+  components: {
+  },
+  data () {
+    return {
+      postId: null,
+      postInfo: null
+    }
+  },
+  mounted () {
+    this.postId = this.$route.params.id
+    this.initData()
+    console.log(this.postId)
+  },
+  methods: {
+    initData () {
+      get('/post/action/detail/' + this.postId)
+        .then(response => {
+          if (response.code === 200) {
+            this.postInfo = response.data
+          } else {
+            ElNotification({
+              title: "错误: " + response.code,
+              message: response.msg,
+              type: 'error',
+              duration: 2000,
+            })
+          }
+        })
+        .catch(() => {
+            ElNotification({
+              title: "错误",
+              message: "发生错误!",
+              type: 'error',
+              duration: 2000,
+            })
+        })
+    },
+    toHome () {
+      this.$router.push({path: '/Home'})
+    },
+    toLike (entityType, entityId, entityUserId) {
+      if (entityType === 1) {
+        if (this.postInfo.hasLike) {
+          // 已点赞, 现在是取消
+          this.postInfo.likeCount--
+        } else {
+          // 进行点赞
+          this.postInfo.likeCount++
+        }
+        this.postInfo.hasLike = !this.postInfo.hasLike
+      }
+      console.log(entityType)
+      console.log(entityId)
+      console.log(entityUserId)
+    },
+    toComment () {
+      
+    },
+    toCollect (entityType, entityId, entityUserId) {
+      if (this.postInfo.hasCollect) {
+        // 已收藏, 现在是取消收藏
+        this.postInfo.collectCount--
+      } else {
+        // 收藏
+        this.postInfo.collectCount++
+      }
+      this.postInfo.hasCollect = !this.postInfo.hasCollect
+      console.log(entityType)
+      console.log(entityId)
+      console.log(entityUserId)
+    }
+  }
+}
+</script>
+
+<style scoped>
+.box {
+	width:100vw;
+	height:100vh;
+  margin: -8px;
+}
+.head {
+  height: 5%;
+  padding: 0px 15px;
+}
+.el-scrollbar {
+  height: 95%;
+}
+.el-row {
+  text-align: center;
+  padding: 10px 0;
+  margin: 0!important;
+}
+.el-row:last-child {
+  margin-bottom: 0;
+}
+.iconfont {
+  font-size: 25px;
+}
+.author{
+  width: 92%;
+  height: 39px;
+  margin: 4%;
+}
+.nickname{
+  margin-left: 8px;
+  width: 50%;
+  display: inline-block;
+  font-size: 20px !important;
+  white-space: nowrap;  /*限制一行内显示文本*/
+  overflow: hidden;     /*隐藏超出的部分*/
+  text-overflow: ellipsis;  /*超出的部分用省略号替代*/
+}
+.content {
+  width: 96%;
+  margin: 2%;
+}
+</style>
