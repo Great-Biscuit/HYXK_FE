@@ -9,9 +9,7 @@
       <i class="iconfont">&#xe65c;</i>
     </el-col>
     <el-col :span="3">
-      <el-badge is-dot :hidden=!hasUnread>
-        <i class="iconfont">&#xe630;</i>
-      </el-badge>
+      <i class="iconfont">&#xe630;</i>
     </el-col>
   </el-row>
 </template>

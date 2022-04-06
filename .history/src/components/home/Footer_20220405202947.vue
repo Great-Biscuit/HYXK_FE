@@ -44,7 +44,7 @@ export default {
   font-size: 25px;
 }
 .add-post {
-  background-color: #006affa1;
+  background-color: #00ff62a1;
   padding: 5px;
   border-radius: 25%;
 }

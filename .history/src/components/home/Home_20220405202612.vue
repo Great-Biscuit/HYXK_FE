@@ -84,7 +84,10 @@ export default {
       this.activeIndex = index;
       this.count = 0;
       this.postList = [];
-      this.load();
+      // 把数据刷满屏, 不然不会触发自动加载
+      // for (let i=0; i<2; i++){
+        this.load();
+      // }
     }
   }
 }
@@ -127,5 +130,8 @@ export default {
 }
 .infinite-list .infinite-list-item + .list-item {
   margin-top: 10px;
+}
+.el-menu-item {
+  background-color: aliceblue;
 }
 </style>

@@ -9,7 +9,7 @@
       <i class="iconfont">&#xe65c;</i>
     </el-col>
     <el-col :span="3">
-      <el-badge is-dot :hidden=!hasUnread>
+      <el-badge is-dot hidden :class="{'badge-display': hasUnread===false}">
         <i class="iconfont">&#xe630;</i>
       </el-badge>
     </el-col>
@@ -72,6 +72,9 @@ export default {
 }
 .iconfont {
   font-size: 25px;
+}
+.badge-display {
+  display: none;
 }
 </style>
 

@@ -4,7 +4,7 @@
       <i class="iconfont">&#xe6bb;</i>
     </el-col>
     <el-col :span="8">
-      <i class="iconfont add-post">&#xe600;</i>
+      <i class="iconfont">&#xe600;</i>
     </el-col>
     <el-col :span="8">
       <i class="iconfont">&#xe607;</i>
@@ -42,10 +42,5 @@ export default {
 }
 .iconfont {
   font-size: 25px;
-}
-.add-post {
-  background-color: #006affa1;
-  padding: 5px;
-  border-radius: 25%;
 }
 </style>

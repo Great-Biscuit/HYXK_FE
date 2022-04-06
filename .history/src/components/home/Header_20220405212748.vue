@@ -9,7 +9,7 @@
       <i class="iconfont">&#xe65c;</i>
     </el-col>
     <el-col :span="3">
-      <el-badge is-dot :hidden=!hasUnread>
+      <el-badge is-dot hidden=this.hasUnread class="badge">
         <i class="iconfont">&#xe630;</i>
       </el-badge>
     </el-col>
