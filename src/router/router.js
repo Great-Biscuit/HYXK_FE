@@ -7,6 +7,7 @@ import Register from '../components/register/Register.vue';
 import FindUsername from '../components/login/FindUsername.vue';
 import FindPassword from '../components/login/FindPassword.vue';
 import PostDetail from '../components/post/PostDetail.vue';
+import MessageHome from '../components/message/MessageHome.vue';
 
 //2. 路由配置
 const routes = [
@@ -21,6 +22,7 @@ const routes = [
   { path: "/FindPassword", component: FindPassword},
   { path: "/Home", component: Home},
   { path: "/PostDetail/:id", component: PostDetail},
+  { path: "/MessageHome", component: MessageHome},
 ]
 
 // 3. 创建路由实例

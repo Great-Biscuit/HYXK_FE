@@ -89,7 +89,6 @@ export default {
   mounted () {
     this.postId = this.$route.params.id
     this.initData()
-    console.log(this.postId)
   },
   methods: {
     initData () {
