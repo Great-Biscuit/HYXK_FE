@@ -8,7 +8,7 @@
     <el-col :span="3">
       <i class="iconfont">&#xe65c;</i>
     </el-col>
-    <el-col :span="3">
+    <el-col :span="3" v-on:click="toMessageHome">
       <el-badge is-dot :hidden=!hasUnread>
         <i class="iconfont">&#xe630;</i>
       </el-badge>
@@ -57,6 +57,9 @@ export default {
               duration: 2000,
             })
         })
+    },
+    toMessageHome () {
+      this.$router.replace({path: '/MessageHome'})
     }
   }
 }

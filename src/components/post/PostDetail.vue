@@ -24,8 +24,8 @@
         <div>
           <el-row :gutter="20">
             <el-col :span="6" v-on:click="toLike(1, postInfo.post.id, postInfo.author.id)">
-              <i class="iconfont" v-show="!postInfo.hasLike">&#xe669;</i>
-              <i class="iconfont" v-show="postInfo.hasLike" style="color:red;">&#xe668;</i>
+              <i class="iconfont" v-if="!postInfo.hasLike">&#xe669;</i>
+              <i class="iconfont" v-if="postInfo.hasLike" style="color:red;">&#xe668;</i>
               {{ postInfo.likeCount }}
             </el-col>
             <el-col :span="3"><el-divider direction="vertical" /></el-col>
@@ -35,15 +35,36 @@
             </el-col>
             <el-col :span="3"><el-divider direction="vertical" /></el-col>
             <el-col :span="6" v-on:click="toCollect(1, postInfo.post.id, postInfo.author.id)">
-              <i class="iconfont" v-show="!postInfo.hasCollect">&#xe64c;</i>
-              <i class="iconfont" v-show="postInfo.hasCollect" style="color:#ff9c00;">&#xe64b;</i>
+              <i class="iconfont" v-if="!postInfo.hasCollect">&#xe64c;</i>
+              <i class="iconfont" v-if="postInfo.hasCollect" style="color:#ff9c00;">&#xe64b;</i>
               {{ postInfo.collectCount }}
             </el-col>
           </el-row>
         </div>
         <el-divider style="margin: 0;"></el-divider>
-        <div class="comment">
-
+        <div class="comment" v-if="postInfo.commentVoList != null">
+          <ul>
+            <li v-for="commentVo in postInfo.commentVoList" :key="commentVo" class="comment-li">
+              <div>
+                <span class="comment-user">{{ commentVo.user.nickname }}</span>:
+                {{ commentVo.comment.content }}
+              </div>
+              <div v-if="commentVo.replyVoList != null">
+                <ul>
+                  <li v-for="replyVo in commentVo.replyVoList" :key="replyVo"  class="reply-li">
+                    <div>
+                      <span class="comment-user">{{ replyVo.user.nickname }}</span>
+                      <span v-if="replyVo.target != null">
+                        回复
+                        <span class="comment-user">{{ replyVo.target?.nickname }}</span>
+                      </span>:
+                      {{ replyVo.reply.content }}
+                    </div>
+                  </li>
+                </ul>
+              </div>
+            </li>
+          </ul>
         </div>
       </div>
     </el-scrollbar>
@@ -173,5 +194,21 @@ export default {
 .content {
   width: 96%;
   margin: 2%;
+}
+ul {
+  padding-inline-start: 20px;
+  margin-inline-end: 10px;
+}
+li {
+  list-style: none;
+}
+.comment-user {
+  color: #0044ff;
+}
+.comment-li {
+  margin-top: 15px;
+}
+.reply-li {
+  margin-top: 5px;
 }
 </style>
