@@ -52,7 +52,7 @@
 import Footer from './Footer.vue'
 import Header from './Header.vue'
 import PostIntro from './PostIntro.vue'
-import { post } from '../../utils/axios'
+import { get } from '../../utils/axios'
 import { ElNotification } from 'element-plus'
 
 export default {
@@ -75,11 +75,11 @@ export default {
     load () {
       let formData = new FormData()
       formData.append('userId', 0)
-      formData.append('type', this.activeIndex)
+      formData.append('type', 0)
       formData.append('offset', this.count)
       formData.append('limit', 8)
-      formData.append('orderMode', 0)
-      post('/post-public/queryAll', formData)
+      formData.append('orderMode', this.activeIndex)
+      get('/post-public/queryAll', formData)
         .then(response => {
           if (response.code === 200) {
             // 每次取8条
