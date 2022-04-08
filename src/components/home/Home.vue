@@ -1,7 +1,7 @@
 <template>
   <el-container>
     <el-header>
-      <Header/>
+      <Header @openMenu="openMenu"/>
     </el-header>
     <el-main>
       <el-menu
@@ -23,6 +23,28 @@
       <Footer/>
     </el-footer>
   </el-container>
+  <el-drawer
+    v-model="drawer"
+    title="✨皓月星空站"
+    :direction="direction" 
+    size="75%" 
+  >
+    <div class="menu-item">
+      <span class="menu-item-content" v-on:click="toHome">🔭首页</span>
+    </div>
+    <div class="menu-item">
+      <span class="menu-item-content">📫公告</span>
+    </div>
+    <div class="menu-item">
+      <span class="menu-item-content">💬问答</span>
+    </div>
+    <div class="menu-item">
+      <span class="menu-item-content">🌱表白墙</span>
+    </div>
+    <div class="developer-info">
+      Developed By <span onclick="javascript:window.open('https://www.greatbiscuit.top/')" class="developer-name">GreatBiscuit</span>
+    </div>
+  </el-drawer>
 </template>
 
 <script>
@@ -44,7 +66,9 @@ export default {
     return {
       activeIndex : "1",
       count : 0,
-      postList : []
+      postList : [],
+      drawer: false,
+      direction: "ltr"
     }
   },
   methods: {
@@ -85,7 +109,14 @@ export default {
       this.count = 0;
       this.postList = [];
       this.load();
-    }
+    },
+    openMenu () {
+      this.drawer = true
+    },
+    // 跳到首页
+    toHome () {
+      this.$router.replace({path: '/Home'})
+    },
   }
 }
 </script>
@@ -127,5 +158,25 @@ export default {
 }
 .infinite-list .infinite-list-item + .list-item {
   margin-top: 10px;
+}
+.menu-item {
+  margin-bottom: 50px;
+}
+.menu-item-content {
+  font-family:黑体;
+  font-size: 18px !important;
+  font-weight:bolder;
+  letter-spacing: 3px;
+}
+.developer-info {
+  text-align: center;
+  font-family:"Times New Roman";
+  position: relative;
+  bottom: -45%;
+}
+.developer-name {
+  font-size: 18px !important;
+  font-weight:bolder;
+  color: #0095ffc7;
 }
 </style>

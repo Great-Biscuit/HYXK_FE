@@ -1,6 +1,6 @@
 <template>
   <el-row :gutter="20">
-    <el-col :span="3">
+    <el-col :span="3" v-on:click="openMenu">
       <i class="iconfont">&#xe684;</i>
     </el-col>
     <el-col :span="3"></el-col>
@@ -60,6 +60,9 @@ export default {
     },
     toMessageHome () {
       this.$router.replace({path: '/MessageHome'})
+    },
+    openMenu () {
+      this.$emit('openMenu')
     }
   }
 }
