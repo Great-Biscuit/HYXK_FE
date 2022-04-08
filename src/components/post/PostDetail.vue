@@ -47,7 +47,7 @@
             <li v-for="commentVo in postInfo.commentVoList" :key="commentVo" class="comment-li">
               <div>
                 <span class="comment-user">{{ commentVo.user.nickname }}</span>:
-                {{ commentVo.comment.content }}
+                {{ commentVo.commentText }}
               </div>
               <div v-if="commentVo.replyVoList != null">
                 <ul>
@@ -58,7 +58,7 @@
                         回复
                         <span class="comment-user">{{ replyVo.target?.nickname }}</span>
                       </span>:
-                      {{ replyVo.reply.content }}
+                      {{ replyVo.replyText }}
                     </div>
                   </li>
                 </ul>
