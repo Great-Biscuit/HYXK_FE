@@ -6,7 +6,7 @@
     <el-col :span="8">
       <i class="iconfont add-post">&#xe600;</i>
     </el-col>
-    <el-col :span="8">
+    <el-col :span="8" v-on:click="toUserPage">
       <i class="iconfont">&#xe607;</i>
     </el-col>
   </el-row>
@@ -14,20 +14,58 @@
 
 <script>
 
+import { get } from '../../utils/axios'
+import { ElNotification } from 'element-plus'
+
 export default {
   name: 'Footer',
   components: {
   },
   data () {
     return {
-      
+      holderUserId: null
     }
   },
+  mounted () {
+    this.getHolderUserId()
+  },
   methods: {
+    getHolderUserId () {
+      get('/user/action/getHolderUserId')
+        .then(response => {
+          if (response.code === 200) {
+            this.holderUserId = response.data
+            console.log(this.holderUserId)
+          } else {
+            ElNotification({
+              title: "错误: " + response.code,
+              message: "获取当前用户信息出错:" + response.msg,
+              type: 'error',
+              duration: 2000,
+            })
+          }
+        })
+        .catch(() => {
+            ElNotification({
+              title: "错误",
+              message: "发生错误!",
+              type: 'error',
+              duration: 2000,
+            })
+        })
+    },
     // 跳到首页
     toHome () {
       this.$router.replace({path: '/Home'})
     },
+    // 当前用户登录就跳到用户页, 否则跳到登录页
+    toUserPage () {
+      if(this.holderUserId === null) {
+        this.$router.replace({path: '/Login'})
+      } else {
+        this.$router.replace({path: '/User/' + this.holderUserId})
+      }
+    }
   }
 }
 </script>
