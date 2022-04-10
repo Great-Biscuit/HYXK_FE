@@ -3,8 +3,8 @@
     <div class="above">
       <div class="head">
         <el-row :gutter="20" class="head-el-row">
-          <el-col :span="3" v-on:click="toHome">
-            <i class="iconfont" v-on:click="toHome">&#xe6bb;</i>
+          <el-col :span="3" v-on:click="this.$router.back()">
+            <i class="iconfont" v-on:click="toHome">&#xe66a;</i>
           </el-col>
           <el-col :span="18"></el-col>
           <el-col :span="3">
@@ -67,7 +67,7 @@
       </div>
     </div>
     <div class="under">
-      
+      <UserPosts :userId="userId" />
     </div>
     <!-- 显示关注的人 -->
     <el-drawer
@@ -96,16 +96,17 @@
 
 import { get } from '../../utils/axios'
 import { ElNotification } from 'element-plus'
+import UserPosts from './UserPosts.vue'
 
 export default {
   name: 'UserInfo',
   components: {
+    UserPosts
   },
   data () {
     return {
       userId: null,
       userInfo: null,
-      postList: null,
       holderUserId: null,
       showFollowee: false,
       followeeList: null,
@@ -117,7 +118,6 @@ export default {
   mounted () {
     this.userId = this.$route.params.userId
     this.getUserInfo()
-    this.getPostList()
   },
   methods: {
     getUserInfo () {
@@ -143,38 +143,6 @@ export default {
               duration: 2000,
             })
         })
-    },
-    getPostList () {
-      let formData = new FormData()
-      formData.append('userId', this.userId)
-      formData.append('type', 0)
-      formData.append('offset', 0)
-      formData.append('limit', 100000)
-      formData.append('orderMode', 1)
-      get('/post-public/queryAll', formData)
-        .then(response => {
-          if (response.code === 200) {
-            this.postList = response.data;
-          } else {
-            ElNotification({
-              title: "错误: " + response.code,
-              message: response.msg,
-              type: 'error',
-              duration: 2000,
-            })
-          }
-        })
-        .catch(() => {
-            ElNotification({
-              title: "错误",
-              message: "发生错误!",
-              type: 'error',
-              duration: 2000,
-            })
-        })
-    },
-    toHome () {
-      this.$router.push({path: '/Home'})
     },
     showFollowFun () {
       this.showFollowee = true

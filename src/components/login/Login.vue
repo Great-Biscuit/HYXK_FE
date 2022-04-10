@@ -92,7 +92,7 @@ export default {
       post('/user/login/verify', f)
         .then(response => {
           if (response.code === 200) {
-            this.$router.replace({path: '/Home'})
+            this.$router.push({path: '/Home'})
           } else {
             ElNotification({
               title: "错误: " + response.code,
@@ -113,15 +113,15 @@ export default {
     },
     // 跳到注册界面
     toRegister () {
-      this.$router.replace({path: '/Register'})
+      this.$router.push({path: '/Register'})
     },
     // 忘记密码
     passwordFind () {
-      this.$router.replace({path: '/FindPassword'})
+      this.$router.push({path: '/FindPassword'})
     },
     // 忘记账号
     usernameFind () {
-      this.$router.replace({path: '/FindUsername'})
+      this.$router.push({path: '/FindUsername'})
     }
   }
 }

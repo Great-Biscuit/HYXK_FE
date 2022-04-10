@@ -79,7 +79,7 @@ export default {
       formData.append('offset', this.count)
       formData.append('limit', 8)
       formData.append('orderMode', this.activeIndex)
-      get('/post-public/queryAll', formData)
+      get('/post-public/queryAllByLimit', formData)
         .then(response => {
           if (response.code === 200) {
             // 每次取8条
@@ -115,7 +115,7 @@ export default {
     },
     // 跳到首页
     toHome () {
-      this.$router.replace({path: '/Home'})
+      this.$router.push({path: '/Home'})
     },
   }
 }

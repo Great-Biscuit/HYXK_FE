@@ -50,7 +50,7 @@ export default {
   },
   methods: {
     detail () {
-      this.$router.replace({path: '/PostDetail/' + this.postVo.post.id})
+      this.$router.push({path: '/PostDetail/' + this.postVo.post.id})
     }
   }
 }

@@ -220,7 +220,7 @@ export default {
               type: 'success',
               duration: 2000,
             })
-            this.$router.replace({path: '/Login'})
+            this.$router.push({path: '/Login'})
           } else {
             ElNotification({
               title: "错误: " + response.code,
@@ -240,7 +240,7 @@ export default {
         })
     },
     toLogin () {
-      this.$router.replace({path: '/Login'})
+      this.$router.push({path: '/Login'})
     }
   }
 }

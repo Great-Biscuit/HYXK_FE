@@ -35,7 +35,6 @@ export default {
         .then(response => {
           if (response.code === 200) {
             this.holderUserId = response.data
-            console.log(this.holderUserId)
           } else {
             ElNotification({
               title: "错误: " + response.code,
@@ -56,14 +55,14 @@ export default {
     },
     // 跳到首页
     toHome () {
-      this.$router.replace({path: '/Home'})
+      this.$router.push({path: '/Home'})
     },
     // 当前用户登录就跳到用户页, 否则跳到登录页
     toUserPage () {
       if(this.holderUserId === null) {
-        this.$router.replace({path: '/Login'})
+        this.$router.push({path: '/Login'})
       } else {
-        this.$router.replace({path: '/User/' + this.holderUserId})
+        this.$router.push({path: '/User/' + this.holderUserId})
       }
     }
   }

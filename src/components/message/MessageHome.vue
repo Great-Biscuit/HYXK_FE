@@ -98,7 +98,6 @@ export default {
         .then(response => {
           if (response.code === 200) {
             this.messageData = response.data
-            console.log(this.messageData)
           } else {
             ElNotification({
               title: "错误: " + response.code,

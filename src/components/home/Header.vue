@@ -59,7 +59,7 @@ export default {
         })
     },
     toMessageHome () {
-      this.$router.replace({path: '/MessageHome'})
+      this.$router.push({path: '/MessageHome'})
     },
     openMenu () {
       this.$emit('openMenu')

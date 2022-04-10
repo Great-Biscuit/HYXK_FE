@@ -2,8 +2,8 @@
   <div class="box">
     <div class="head">
       <el-row :gutter="20">
-        <el-col :span="3" v-on:click="toHome">
-          <i class="iconfont">&#xe6bb;</i>
+        <el-col :span="3" v-on:click="this.$router.back()">
+          <i class="iconfont">&#xe66a;</i>
         </el-col>
         <el-col :span="18">帖子详情</el-col>
         <el-col :span="3">
@@ -113,9 +113,6 @@ export default {
               duration: 2000,
             })
         })
-    },
-    toHome () {
-      this.$router.push({path: '/Home'})
     },
     toLike (entityType, entityId, entityUserId) {
       if (entityType === 1) {
