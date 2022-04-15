@@ -9,6 +9,7 @@ import FindPassword from '../components/login/FindPassword.vue';
 import PostDetail from '../components/post/PostDetail.vue';
 import MessageHome from '../components/message/MessageHome.vue';
 import User from '../components/user/UserInfo.vue';
+import UpdateUserInfo from '../components/user/UpdateUserInfo.vue';
 
 //2. 路由配置
 const routes = [
@@ -25,6 +26,7 @@ const routes = [
   { path: "/PostDetail/:id", component: PostDetail},
   { path: "/MessageHome", component: MessageHome},
   { path: "/User/:userId", component: User},
+  { path: "/UpdateUserInfo", component: UpdateUserInfo},
 ]
 
 // 3. 创建路由实例

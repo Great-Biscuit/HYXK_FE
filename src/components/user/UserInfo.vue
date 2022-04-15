@@ -4,7 +4,7 @@
       <div class="head">
         <el-row :gutter="20" class="head-el-row">
           <el-col :span="3" v-on:click="this.$router.back()">
-            <i class="iconfont" v-on:click="toHome">&#xe66a;</i>
+            <i class="iconfont">&#xe66a;</i>
           </el-col>
           <el-col :span="18"></el-col>
           <el-col :span="3">
@@ -20,7 +20,7 @@
           <el-col :span="5"></el-col>
           <el-col :span="11" style="text-align: center;">
             <!-- 如果是用户本人就显示[编辑资料], 否则显示[关注 私信] -->
-            <el-button round class="user-info-button" v-if="userId === holderUserId">
+            <el-button round class="user-info-button" v-if="userId === holderUserId" @click="this.$router.push('/UpdateUserInfo')">
               <span class="white-bolder-font">编辑资料</span>
             </el-button>
             <span v-else>
@@ -78,6 +78,9 @@
     :destroy-on-close="true"
     >
       <el-empty description="还没有关注Ta哟~" v-if="followeeList === null || followeeList.length === 0" />
+      <div v-else class="fansOrFollowList">
+
+      </div>
     </el-drawer>
     <!-- 显示粉丝 -->
     <el-drawer
@@ -88,6 +91,32 @@
     :destroy-on-close="true"
     >
       <el-empty description="还没有粉丝哟~" v-if="fansList === null || fansList.length === 0" />
+      <div v-else class="fansOrFollowList">
+        <el-scrollbar>
+          <div v-for="fansVo in fansList" :key="fansVo" class="fansOrFollowItem">
+            <el-row style="align-items: center;">
+              <el-col :span="4">
+                <el-avatar :size="50" :src="fansVo.user.headerUrl" style="margin: 3px;" />
+              </el-col>
+              <el-col :span="14" class="fansOrFollowNickname">
+                <span>{{ fansVo.user.nickname }}</span>
+                <!-- 0-未知 1-男 2-女 -->
+                <span class="iconfont white-bolder-font" v-if="fansVo.user.gender === 0" style="margin-left: 3px;padding: 3px;border-radius: 50%;background-color: #7a7a7a;">&#xe65e;</span>
+                <span class="iconfont white-bolder-font" v-else-if="fansVo.user.gender === 1" style="margin-left: 3px;padding: 3px;border-radius: 50%;background-color: #00a9ff;">&#xe68d;</span>
+                <span class="iconfont white-bolder-font" v-else style="margin-left: 3px;padding: 3px;border-radius: 50%;background-color: #fb9b9b;">&#xe68b;</span>
+              </el-col>
+              <el-col :span="6" style="text-align: center;">
+                <el-button round class="user-info-button" v-if="fansVo.hasFollowed">
+                  <span class="white-bolder-font" style="color: #333333b3;">已关注</span>
+                </el-button>
+                <el-button round class="user-info-button" v-else>
+                  <span class="white-bolder-font">关注</span>
+                </el-button>
+              </el-col>
+            </el-row>
+          </div>
+        </el-scrollbar>
+      </div>
     </el-drawer>
   </div>
 </template>
@@ -146,11 +175,63 @@ export default {
     },
     showFollowFun () {
       this.showFollowee = true
-      // TODO: 请求接口加载列表
+
+      let formData = new FormData()
+      formData.append('userId', this.userId)
+      formData.append('offset', 0)
+      formData.append('limit', 100) //查询100个
+      get('/user/follow/followList', formData)
+        .then(response => {
+          if (response.code === 200) {
+            // 每次取8条
+            this.followeeList = response.data;
+          } else {
+            ElNotification({
+              title: "错误: " + response.code,
+              message: response.msg,
+              type: 'error',
+              duration: 2000,
+            })
+          }
+        })
+        .catch(() => {
+            ElNotification({
+              title: "错误",
+              message: "发生错误!",
+              type: 'error',
+              duration: 2000,
+            })
+        })
     },
     showFansFun () {
       this.showFans = true
-      // TODO: 请求接口加载列表
+      
+      let formData = new FormData()
+      formData.append('userId', this.userId)
+      formData.append('offset', 0)
+      formData.append('limit', 100) //查询100个
+      get('/user/follow/fansList', formData)
+        .then(response => {
+          if (response.code === 200) {
+            // 每次取8条
+            this.fansList = response.data;
+          } else {
+            ElNotification({
+              title: "错误: " + response.code,
+              message: response.msg,
+              type: 'error',
+              duration: 2000,
+            })
+          }
+        })
+        .catch(() => {
+            ElNotification({
+              title: "错误",
+              message: "发生错误!",
+              type: 'error',
+              duration: 2000,
+            })
+        })
     }
   }
 }
@@ -205,5 +286,24 @@ export default {
   position: absolute;
   bottom: 9px;
   width: 90%;
+}
+.fansOrFollowList {
+  height: 100%;
+  width: 100%;
+}
+:deep(.el-drawer__body) {
+  padding: 0;
+}
+.fansOrFollowNickname {
+  font-family:黑体;
+  font-size: 20px;
+  font-weight:bolder;
+  white-space: nowrap;  /*限制一行内显示文本*/
+  overflow: hidden;     /*隐藏超出的部分*/
+  text-overflow: ellipsis;  /*超出的部分用省略号替代*/
+  width: 100%;
+}
+.fansOrFollowItem {
+  height: 60px;
 }
 </style>
