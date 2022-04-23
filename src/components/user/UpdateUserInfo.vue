@@ -15,10 +15,12 @@
       <div style="padding-top: 10%;text-align: center;">
         <el-upload
           class="avatar-uploader"
-          action="https://jsonplaceholder.typicode.com/posts/"
+          action="https://upload-z2.qiniup.com"
+          :data="uploadToken"
           :show-file-list="false"
           :on-success="handleAvatarSuccess"
           :before-upload="beforeAvatarUpload"
+          
         >
           <img v-if="user.headerUrl" :src="user.headerUrl" class="avatar-img" />
           <el-icon v-else class="avatar-uploader-icon"><Plus /></el-icon>
@@ -65,7 +67,7 @@
 <script>
 
 import { Plus } from '@element-plus/icons-vue'
-import { post } from '../../utils/axios'
+import { get, post } from '../../utils/axios'
 import { ElNotification } from 'element-plus'
 
 export default {
@@ -75,13 +77,40 @@ export default {
   },
   data () {
     return {
-      user: null
+      user: null,
+      uploadToken: {
+        token: null
+      }
     }
   },
   mounted () {
     this.getHolderInfo()
+    this.getUploadAvtarToken()
   },
   methods: {
+    getUploadAvtarToken () {
+      get("/user/action/getUploadAvatarToken")
+      .then(response => {
+          if (response.code === 200) {
+            this.uploadToken.token = response.data
+          } else {
+            ElNotification({
+              title: "错误: " + response.code,
+              message: response.msg,
+              type: 'error',
+              duration: 2000,
+            })
+          }
+        })
+        .catch(() => {
+            ElNotification({
+              title: "错误",
+              message: "发生错误!",
+              type: 'error',
+              duration: 2000,
+            })
+        })
+    },
     getHolderInfo () {
       post('/user/action/getHolderInfo')
         .then(response => {
@@ -135,6 +164,21 @@ export default {
               duration: 2000,
             })
         })
+    },
+    // 上传头像前先处理类型
+    beforeAvatarUpload (rawFile) {
+      if (rawFile.type !== 'image/jpeg') {
+        console.log('Avatar picture must be JPG format!')
+        return false
+      } else if (rawFile.size / 1024 / 1024 > 2) {
+        console.log('Avatar picture size can not exceed 2MB!')
+        return false
+      }
+      return true
+    },
+    // 上传头像后修改路径
+    handleAvatarSuccess (res) {
+      this.user.headerUrl = 'http://avatar.hyxk.xyz/' + res.key
     }
   }
 }
