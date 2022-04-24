@@ -5,7 +5,7 @@
         <el-col :span="3" v-on:click="this.$router.back()">
             <i class="iconfont">&#xe66a;</i>
           </el-col>
-          <el-col :span="18">编辑帖子</el-col>
+          <el-col :span="18">发布帖子</el-col>
           <el-col :span="3">
             <el-button type="info" @click="addPost" round>发布</el-button>
           </el-col>
@@ -42,7 +42,7 @@
               :on-success="handleAvatarSuccess"
               :before-upload="beforeAvatarUpload"
             >
-              <img v-if="post.headerUrl" :src="post.headerUrl" class="header-img" />
+              <img v-if="post.headImg" :src="post.headImg" class="header-img" />
               <el-icon v-else class="header-uploader-icon"><Plus /></el-icon>
             </el-upload>
           </div>
@@ -77,7 +77,7 @@ export default {
       post: {
         title: null,
         markdownContent: '',
-        headerUrl: null,
+        headImg: null,
         type: null
       },
       optionsAdmin: [
@@ -172,17 +172,27 @@ export default {
     // 上传头图前先处理类型
     beforeAvatarUpload (rawFile) {
       if (rawFile.type !== 'image/jpeg') {
-        console.log('Avatar picture must be JPG format!')
+        ElNotification({
+              title: "错误",
+              message: "仅支持jpg格式图片",
+              type: 'error',
+              duration: 2000,
+            })
         return false
       } else if (rawFile.size / 1024 / 1024 > 2) {
-        console.log('Avatar picture size can not exceed 2MB!')
+        ElNotification({
+              title: "错误",
+              message: "图片大小不能超过2M",
+              type: 'error',
+              duration: 2000,
+            })
         return false
       }
       return true
     },
     // 上传头图后修改路径
     handleAvatarSuccess (res) {
-      this.post.headerUrl = 'http://images.hyxk.xyz/' + res.key
+      this.post.headImg = 'http://images.hyxk.xyz/' + res.key
     },
     // 文章中的图片
     handleUploadImage(event, insertImage, files) {
@@ -222,7 +232,7 @@ export default {
       let formData = new FormData()
       formData.append('title', this.post.title)
       formData.append('markdownContent', this.post.markdownContent)
-      formData.append('headerUrl', this.post.headerUrl)
+      formData.append('headImg', this.post.headImg)
       formData.append('type', this.post.type)
       post('/post/action/addPost', formData)
         .then(response => {
@@ -282,8 +292,8 @@ export default {
   height: 100%;
 }
 .header-img {
-  width: 50px;
-  height: 50px;
+  width: 60px;
+  height: 60px;
   display: block;
 }
 .header-imag-uploader .el-upload {

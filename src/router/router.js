@@ -11,6 +11,7 @@ import MessageHome from '../components/message/MessageHome.vue';
 import User from '../components/user/UserInfo.vue';
 import UpdateUserInfo from '../components/user/UpdateUserInfo.vue';
 import EditPost from '../components/post/EditPost.vue';
+import UpdatePost from '../components/post/UpdatePost.vue';
 
 //2. 路由配置
 const routes = [
@@ -29,6 +30,7 @@ const routes = [
   { path: "/User/:userId", component: User},
   { path: "/UpdateUserInfo", component: UpdateUserInfo},
   { path: "/EditPost", component: EditPost},
+  { path: "/UpdatePost/:postId", component: UpdatePost},
 ]
 
 // 3. 创建路由实例
