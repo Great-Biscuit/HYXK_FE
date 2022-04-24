@@ -3,7 +3,7 @@
     <el-col :span="8" v-on:click="toHome">
       <i class="iconfont">&#xe6bb;</i>
     </el-col>
-    <el-col :span="8">
+    <el-col :span="8" v-on:click="toAddPost">
       <i class="iconfont add-post">&#xe600;</i>
     </el-col>
     <el-col :span="8" v-on:click="toUserPage">
@@ -64,6 +64,10 @@ export default {
       } else {
         this.$router.push({path: '/User/' + this.holderUserId})
       }
+    },
+    // 跳转到发布帖子页面
+    toAddPost () {
+      this.$router.push({path: '/EditPost'})
     }
   }
 }

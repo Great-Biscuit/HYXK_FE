@@ -219,7 +219,38 @@ export default {
     },
     addPost () {
       // 发布文章
-      console.log('发布文章:' , this.post)
+      let formData = new FormData()
+      formData.append('title', this.post.title)
+      formData.append('markdownContent', this.post.markdownContent)
+      formData.append('headerUrl', this.post.headerUrl)
+      formData.append('type', this.post.type)
+      post('/post/action/addPost', formData)
+        .then(response => {
+          if (response.code === 200) {
+            ElNotification({
+              title: "成功发布",
+              message: "系统处理可能需要一些时间, 请稍后...",
+              type: 'success',
+              duration: 2000,
+            })
+            this.$router.back()
+          } else {
+            ElNotification({
+              title: "错误: " + response.code,
+              message: response.msg,
+              type: 'error',
+              duration: 2000,
+            })
+          }
+        })
+        .catch(() => {
+            ElNotification({
+              title: "错误",
+              message: "发生错误!",
+              type: 'error',
+              duration: 2000,
+            })
+        })
     }
   }
 }
