@@ -42,29 +42,11 @@
           </el-row>
         </div>
         <el-divider style="margin: 0;"></el-divider>
-        <div class="comment" v-if="postInfo.commentVoList != null">
-          <ul>
-            <li v-for="commentVo in postInfo.commentVoList" :key="commentVo" class="comment-li">
-              <div>
-                <span class="comment-user">{{ commentVo.user.nickname }}</span>:
-                {{ commentVo.commentText }}
-              </div>
-              <div v-if="commentVo.replyVoList != null">
-                <ul>
-                  <li v-for="replyVo in commentVo.replyVoList" :key="replyVo"  class="reply-li">
-                    <div>
-                      <span class="comment-user">{{ replyVo.user.nickname }}</span>
-                      <span v-if="replyVo.target != null">
-                        回复
-                        <span class="comment-user">{{ replyVo.target?.nickname }}</span>
-                      </span>:
-                      {{ replyVo.replyText }}
-                    </div>
-                  </li>
-                </ul>
-              </div>
-            </li>
-          </ul>
+        <div class="comments" v-if="postInfo.commentVoList != null">
+          <!-- 评论列表 -->
+          <div v-for="item in postInfo.commentVoList" :key="item.id">
+            <comment :comment="item" @changeCommentLiked="changeCommentLiked"/>
+          </div>
         </div>
       </div>
     </el-scrollbar>
@@ -93,10 +75,12 @@
 
 import { get, post } from '../../utils/axios'
 import { ElNotification } from 'element-plus'
+import Comment from '../post/Comment.vue'
 
 export default {
   name: 'PostDetail',
   components: {
+    Comment
   },
   data () {
     return {
@@ -164,6 +148,26 @@ export default {
       console.log(entityType)
       console.log(entityId)
       console.log(entityUserId)
+    },
+    // 对评论或回复点赞取消
+    changeCommentLiked (contentId, replyId, liked, count) {
+      this.postInfo.commentVoList = this.postInfo.commentVoList.map((comment) => {
+        if (comment.id === contentId) {
+          if (replyId) { // 如果传入了回复id，表示在对回复进行点赞取消操作
+            comment.replyVoList = comment.replyVoList.map((item) => {
+              if (item.id === replyId) {
+                item.hasLike = liked
+                item.likeCount += count
+              }
+              return item
+            })
+          } else { // 对评论进行点赞取消操作
+            comment.hasLike = liked
+            comment.likeCount += count
+          }
+        }
+        return comment
+      })
     },
     openActionBox () {
       // 打开操作框
@@ -252,7 +256,10 @@ export default {
   width: 96%;
   margin: 2%;
 }
-ul {
+.comments {
+  padding: 20px;
+}
+/*ul {
   padding-inline-start: 20px;
   margin-inline-end: 10px;
 }
@@ -267,5 +274,5 @@ li {
 }
 .reply-li {
   margin-top: 5px;
-}
+}*/
 </style>
