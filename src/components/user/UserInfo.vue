@@ -8,7 +8,7 @@
           </el-col>
           <el-col :span="18"></el-col>
           <el-col :span="3">
-            <i class="iconfont" v-on:click="toHome" style="color: #f7c8b2;" v-if="userId === holderUserId">&#xe8b7;</i>
+            <i class="iconfont" v-on:click="openActionBox" style="color: #a1c0ff;" v-if="userId === holderUserId">&#xe8b7;</i>
           </el-col>
         </el-row>
       </div>
@@ -118,6 +118,18 @@
         </el-scrollbar>
       </div>
     </el-drawer>
+    <el-drawer
+    v-model="drawer"
+    :direction="actionBoxDirection" 
+    size="150px" 
+    :with-header="false"
+    >
+      <div class="actionBox">
+        <div class="actionBoxItem" style="color: #73767a;">修改密码</div>
+        <el-divider />
+        <div class="actionBoxItem" style="color: red;">退出登录</div>
+      </div>
+    </el-drawer>
   </div>
 </template>
 
@@ -141,7 +153,9 @@ export default {
       followeeList: null,
       showFans: false,
       fansList: null,
-      direction: "ttb"
+      direction: "ttb",
+      drawer: false,
+      actionBoxDirection: "btt"
     }
   },
   mounted () {
@@ -232,7 +246,11 @@ export default {
               duration: 2000,
             })
         })
-    }
+    },
+    openActionBox () {
+      // 打开操作框
+      this.drawer = true
+    },
   }
 }
 </script>
@@ -305,5 +323,14 @@ export default {
 }
 .fansOrFollowItem {
   height: 60px;
+}
+.actionBox {
+  text-align: center;
+}
+.actionBoxItem {
+  font-family:黑体;
+  font-size: 20px;
+  font-weight:bolder;
+  margin: 25px;
 }
 </style>
