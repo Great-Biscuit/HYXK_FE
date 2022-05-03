@@ -7,7 +7,7 @@
         </el-col>
         <el-col :span="18">帖子详情</el-col>
         <el-col :span="3">
-          <i class="iconfont">&#xe612;</i>
+          <i class="iconfont" @click="openActionBox">&#xe612;</i>
         </el-col>
       </el-row>
     </div>
@@ -68,12 +68,30 @@
         </div>
       </div>
     </el-scrollbar>
+    <el-drawer
+    v-model="drawer"
+    :direction="direction" 
+    size="10%" 
+    :with-header="false"
+    >
+      <el-row>
+        <el-col :span="11" @click="toUpdatePost">
+          <span style="color: #337ecc;">编辑</span>
+        </el-col>
+        <el-col :span="2">
+          <el-divider direction="vertical" />
+        </el-col>
+        <el-col :span="11" @click="deletePost">
+          <span style="color: red;">删除</span>
+        </el-col>
+      </el-row>
+    </el-drawer>
   </div>
 </template>
 
 <script>
 
-import { get } from '../../utils/axios'
+import { get, post } from '../../utils/axios'
 import { ElNotification } from 'element-plus'
 
 export default {
@@ -83,7 +101,9 @@ export default {
   data () {
     return {
       postId: null,
-      postInfo: null
+      postInfo: null,
+      drawer: false,
+      direction: "btt"
     }
   },
   mounted () {
@@ -144,6 +164,47 @@ export default {
       console.log(entityType)
       console.log(entityId)
       console.log(entityUserId)
+    },
+    openActionBox () {
+      // 打开操作框
+      this.drawer = true
+    },
+    deletePost () {
+      // 删除帖子
+      let formData = new FormData()
+      formData.append('postId', this.postId)
+      post('/post/action/deletePost', formData)
+        .then(response => {
+          if (response.code === 200) {
+            // 删除成功, 返回上一页
+            ElNotification({
+              title: "成功",
+              message: "成功删除帖子!",
+              type: 'success',
+              duration: 2000,
+            })
+            this.$router.back()
+          } else {
+            ElNotification({
+              title: "错误: " + response.code,
+              message: response.msg,
+              type: 'error',
+              duration: 2000,
+            })
+          }
+        })
+        .catch(() => {
+            ElNotification({
+              title: "错误",
+              message: "发生错误!",
+              type: 'error',
+              duration: 2000,
+            })
+        })
+    },
+    toUpdatePost () {
+      // 去编辑帖子
+      this.$router.push({path: '/UpdatePost/' + this.postId})
     }
   }
 }
