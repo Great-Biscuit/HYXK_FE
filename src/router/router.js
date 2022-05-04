@@ -8,6 +8,7 @@ import FindUsername from '../components/login/FindUsername.vue';
 import FindPassword from '../components/login/FindPassword.vue';
 import PostDetail from '../components/post/PostDetail.vue';
 import MessageHome from '../components/message/MessageHome.vue';
+import Chat from '../components/message/Chat.vue'
 import User from '../components/user/UserInfo.vue';
 import UpdateUserInfo from '../components/user/UpdateUserInfo.vue';
 import EditPost from '../components/post/EditPost.vue';
@@ -27,6 +28,7 @@ const routes = [
   { path: "/Home", component: Home},
   { path: "/PostDetail/:id", component: PostDetail},
   { path: "/MessageHome", component: MessageHome},
+  { path: "/chat/:targetId", component: Chat},
   { path: "/User/:userId", component: User},
   { path: "/UpdateUserInfo", component: UpdateUserInfo},
   { path: "/EditPost", component: EditPost},

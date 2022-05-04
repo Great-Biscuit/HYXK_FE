@@ -51,7 +51,7 @@
     <div class="letter" v-if="messageData != null">
       <el-empty description="没有私信哟~" v-if="messageData.conversationList === null || messageData.conversationList.length === 0" />
       <el-scrollbar v-else>
-        <div v-for="conversationVo in messageData.conversationList" :key="conversationVo" class="letter-item">
+        <div v-for="conversationVo in messageData.conversationList" :key="conversationVo" class="letter-item" @click="toChat(conversationVo.targetUser.id)">
           <span class="letter-avater">
             <el-avatar :size="38" :src="conversationVo.targetUser.headerUrl" />
           </span>
@@ -116,6 +116,16 @@ export default {
             })
         })
     },
+    toChat (targetId) {
+      // 将当前点击的私信未读数量置为0（可删除，后台会有相应操作）
+      //letterList.value.forEach((item) => {
+      //  if (item.from.id === userId) {
+      //    unreadLetter.value -= item.letter.unreadCount // 减去当前已读私信数量
+      //    item.letter.unreadCount = 0 // 当前私信未读数量置为0
+      //  }
+      //})
+      this.$router.push(`/chat/${targetId}`)
+    }
   }
 }
 </script>
