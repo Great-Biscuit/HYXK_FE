@@ -71,7 +71,7 @@
         <el-tab-pane label="发布" name="userPosts"></el-tab-pane>
         <el-tab-pane label="收藏" name="collectPosts"></el-tab-pane>
       </el-tabs>
-      <div class="postsBox">
+      <div class="postsBox" v-if="userId !== null">
         <UserPosts :userId="userId" v-if="activeName === 'userPosts'" />
         <CollectPosts :userId="userId" v-else />
       </div>
@@ -132,9 +132,9 @@
     :with-header="false"
     >
       <div class="actionBox">
-        <div class="actionBoxItem" style="color: #73767a;">修改密码</div>
+        <div class="actionBoxItem" style="color: #73767a;" @click="toUpdatePassword">修改密码</div>
         <el-divider />
-        <div class="actionBoxItem" style="color: red;">退出登录</div>
+        <div class="actionBoxItem" style="color: red;" @click="logout">退出登录</div>
       </div>
     </el-drawer>
   </div>
@@ -260,6 +260,12 @@ export default {
     openActionBox () {
       // 打开操作框
       this.drawer = true
+    },
+    toUpdatePassword () {
+      console.log("修改密码")
+    },
+    logout () {
+      console.log("登出")
     },
   }
 }
