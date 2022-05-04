@@ -142,7 +142,7 @@
 
 <script>
 
-import { get } from '../../utils/axios'
+import { get, post } from '../../utils/axios'
 import { ElNotification } from 'element-plus'
 import UserPosts from './UserPosts.vue'
 import CollectPosts from './CollectPosts.vue'
@@ -262,10 +262,39 @@ export default {
       this.drawer = true
     },
     toUpdatePassword () {
+      // 关闭操作框
+      this.drawer = false
       console.log("修改密码")
     },
     logout () {
-      console.log("登出")
+      post('/user/login/loginOut')
+        .then(response => {
+          if (response.code === 200) {
+            ElNotification({
+              title: "成功",
+              message: "退出登录",
+              type: 'success',
+              duration: 2000,
+            })
+            // replace到首页
+            this.$router.replace({path: '/Home'})
+          } else {
+            ElNotification({
+              title: "错误: " + response.code,
+              message: response.msg,
+              type: 'error',
+              duration: 2000,
+            })
+          }
+        })
+        .catch(() => {
+            ElNotification({
+              title: "错误",
+              message: "发生错误!",
+              type: 'error',
+              duration: 2000,
+            })
+        })
     },
   }
 }
