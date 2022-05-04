@@ -6,7 +6,7 @@
     <el-col :span="3"></el-col>
     <el-col :span="12" style="font-size : 120%;">主页</el-col>
     <el-col :span="3">
-      <i class="iconfont">&#xe65c;</i>
+      <i class="iconfont" @click.prevent="this.$router.push('/Search')">&#xe65c;</i>
     </el-col>
     <el-col :span="3" v-on:click="toMessageHome">
       <el-badge is-dot :hidden=!hasUnread>
