@@ -67,7 +67,14 @@
       </div>
     </div>
     <div class="under">
-      <UserPosts :userId="userId" />
+      <el-tabs v-model="activeName" class="demo-tabs" :stretch="true">
+        <el-tab-pane label="发布" name="userPosts"></el-tab-pane>
+        <el-tab-pane label="收藏" name="collectPosts"></el-tab-pane>
+      </el-tabs>
+      <div class="postsBox">
+        <UserPosts :userId="userId" v-if="activeName === 'userPosts'" />
+        <CollectPosts :userId="userId" v-else />
+      </div>
     </div>
     <!-- 显示关注的人 -->
     <el-drawer
@@ -138,11 +145,13 @@
 import { get } from '../../utils/axios'
 import { ElNotification } from 'element-plus'
 import UserPosts from './UserPosts.vue'
+import CollectPosts from './CollectPosts.vue'
 
 export default {
   name: 'UserInfo',
   components: {
-    UserPosts
+    UserPosts,
+    CollectPosts
   },
   data () {
     return {
@@ -155,7 +164,8 @@ export default {
       fansList: null,
       direction: "ttb",
       drawer: false,
-      actionBoxDirection: "btt"
+      actionBoxDirection: "btt",
+      activeName: 'userPosts',
     }
   },
   mounted () {
@@ -332,5 +342,17 @@ export default {
   font-size: 20px;
   font-weight:bolder;
   margin: 25px;
+}
+.demo-tabs {
+  height: 40px;
+}
+.postsBox {
+  height: calc(100% - 40px);
+}
+:deep(.el-tabs__item.is-active) {
+  color: #dca445;
+}
+:deep(.el-tabs__active-bar) {
+  background-color: #dca445;
 }
 </style>

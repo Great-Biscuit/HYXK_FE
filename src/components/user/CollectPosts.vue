@@ -15,7 +15,7 @@ import { ElNotification } from 'element-plus'
 import PostIntroForUserInfo from './PostIntroForUserInfo.vue'
 
 export default {
-  name: 'UserPosts',
+  name: 'CollectPosts',
   props: [
     'userId'
   ],
@@ -32,11 +32,9 @@ export default {
     load () {
       let formData = new FormData()
       formData.append('userId', this.userId)
-      formData.append('type', 0)
       formData.append('offset', this.count)
       formData.append('limit', 8)
-      formData.append('orderMode', -1)
-      get('/post-public/queryAllByLimit', formData)
+      get('/post/action/getCollectedPostList', formData)
         .then(response => {
           if (response.code === 200) {
             // 每次取8条
