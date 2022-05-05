@@ -6,14 +6,14 @@
       </div>
       <div class="middle">
         <span class="nickname">{{comment.user.nickname}}</span>
-        <p class="text">{{comment.commentText}}</p>
+        <p class="text" @click="handleCommentClick(2, comment.id, 0, comment.user.id)">{{comment.commentText}}</p>
         <span class="commentTime">{{comment.commentTime}}</span>
       </div>
       <div class="like">
         <span
           :class="{'iconfont': true, 'like__icon': true, 'like__icon--active': comment.hasLike}"
           v-html="icon"
-          @click="handleCommentLikeClick(comment.id, comment.hasLike)"
+          @click="handleCommentLikeClick(comment.id, comment.hasLike, comment.user.id)"
         >
         </span>
         <span class="like__count">{{comment.likeCount}}</span>
@@ -26,14 +26,14 @@
         </div>
         <div class="reply__middle">
           <span class="user__nickname">{{item?.user.nickname}}</span>
-          <p><span class="reply__tip" v-if="item?.target != null">回复 <span class="target__nickname">{{item?.target.nickname}}</span>: </span><span class="text">{{item?.replyText}}</span></p>
+          <p><span class="reply__tip" v-if="item?.target != null">回复 <span class="target__nickname">{{item?.target.nickname}}</span>: </span><span class="text" @click="handleCommentClick(2, item.id, item.user.id, item.user.id)">{{item?.replyText}}</span></p>
           <span class="replyTime">{{item?.replyTime}}</span>
         </div>
         <div class="reply__like">
           <span
             :class="{'iconfont': true, 'like__icon': true, 'like__icon--active': item?.hasLike}"
             v-html="replyIcon[index]"
-            @click="handleReplyLikeClick(comment.id, item?.id, index, item?.hasLike)"
+            @click="handleReplyLikeClick(comment.id, item?.id, index, item?.hasLike, item?.user.id)"
           >
           </span>
           <span class="like__count">{{item?.likeCount}}</span>
@@ -45,14 +45,18 @@
 </template>
 
 <script>
+
+import { post } from '../../utils/axios'
+import { ElNotification } from 'element-plus'
+
 export default {
   name: 'Comment',
-  props: ['comment'],
+  props: ['comment', 'postId'],
   data () {
     return {
       icon: '',
       replyIcon: [],
-      tips: ''
+      tips: '',
     }
   },
   mounted () {
@@ -75,24 +79,74 @@ export default {
       }
     },
     // 处理点赞评论的事件
-    handleCommentLikeClick (commentId, liked) {
-      if (!liked) {
-        this.icon = '&#xe668;'
-        this.$emit('changeCommentLiked', commentId, null, true, 1)
-      } else {
-        this.icon = '&#xe669;'
-        this.$emit('changeCommentLiked', commentId, null, false, -1)
-      }
+    handleCommentLikeClick (commentId, liked, entityUserId) {    
+      let formData = new FormData()
+      formData.append('postId', this.postId)
+      formData.append('entityType', 2)
+      formData.append('entityId', commentId)
+      formData.append('entityUserId', entityUserId)
+      post('/post/like/execute', formData)
+        .then(response => {
+          if (response.code === 200) {
+            if (!liked) {
+              this.icon = '&#xe668;'
+              this.$emit('changeCommentLiked', commentId, null, true, 1)
+            } else {
+              this.icon = '&#xe669;'
+              this.$emit('changeCommentLiked', commentId, null, false, -1)
+            }
+          } else {
+            ElNotification({
+              title: "错误: " + response.code,
+              message: response.msg,
+              type: 'error',
+              duration: 2000,
+            })
+          }
+        })
+        .catch(() => {
+            ElNotification({
+              title: "错误",
+              message: "发生错误!",
+              type: 'error',
+              duration: 2000,
+            })
+        })
     },
     // 处理点赞回复的事件
-    handleReplyLikeClick (contentId, replyId, index, liked) {
-      if (!liked) {
-        this.replyIcon[index] = '&#xe668;'
-        this.$emit('changeCommentLiked', contentId, replyId, true, 1)
-      } else {
-        this.replyIcon[index] = '&#xe669;'
-        this.$emit('changeCommentLiked', contentId, replyId, false, -1)
-      }
+    handleReplyLikeClick (contentId, replyId, index, liked, entityUserId) {
+      let formData = new FormData()
+      formData.append('postId', this.postId)
+      formData.append('entityType', 2)
+      formData.append('entityId', replyId)
+      formData.append('entityUserId', entityUserId)
+      post('/post/like/execute', formData)
+        .then(response => {
+          if (response.code === 200) {
+            if (!liked) {
+              this.replyIcon[index] = '&#xe668;'
+              this.$emit('changeCommentLiked', contentId, replyId, true, 1)
+            } else {
+              this.replyIcon[index] = '&#xe669;'
+              this.$emit('changeCommentLiked', contentId, replyId, false, -1)
+            }
+          } else {
+            ElNotification({
+              title: "错误: " + response.code,
+              message: response.msg,
+              type: 'error',
+              duration: 2000,
+            })
+          }
+        })
+        .catch(() => {
+            ElNotification({
+              title: "错误",
+              message: "发生错误!",
+              type: 'error',
+              duration: 2000,
+            })
+        })
     },
     // 展开收起回复
     handleExpandClick () {
@@ -105,7 +159,40 @@ export default {
     // 点击头像进入个人主页
     handleAvatarClick (userId) {
       this.$router.push(`/user/${userId}`)
-    }
+    },
+    // 处理评论点击操作
+    handleCommentClick (entityType, entityId, targetId, clickedUser) {
+      this.$emit('handleCommentClick', entityType, entityId, targetId, clickedUser)
+    },
+    // 点赞
+    toLike (entityType, entityId, entityUserId) {
+      let formData = new FormData()
+      formData.append('postId', this.postId)
+      formData.append('entityType', entityType)
+      formData.append('entityId', entityId)
+      formData.append('entityUserId', entityUserId)
+      post('/post/like/execute', formData)
+        .then(response => {
+          if (response.code === 200) {
+            return true
+          } else {
+            ElNotification({
+              title: "错误: " + response.code,
+              message: response.msg,
+              type: 'error',
+              duration: 2000,
+            })
+          }
+        })
+        .catch(() => {
+            ElNotification({
+              title: "错误",
+              message: "发生错误!",
+              type: 'error',
+              duration: 2000,
+            })
+        })
+    },
   }
 }
 </script>
@@ -203,7 +290,7 @@ export default {
     color: #000;
   }
   .target__nickname{
-    color: #75a297;
+    color: #79bbff;
     font-size: 14px;
   }
   .text{

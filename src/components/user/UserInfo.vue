@@ -67,7 +67,14 @@
       </div>
     </div>
     <div class="under">
-      <UserPosts :userId="userId" />
+      <el-tabs v-model="activeName" class="demo-tabs" :stretch="true">
+        <el-tab-pane label="发布" name="userPosts"></el-tab-pane>
+        <el-tab-pane label="收藏" name="collectPosts"></el-tab-pane>
+      </el-tabs>
+      <div class="postsBox" v-if="userId !== null">
+        <UserPosts :userId="userId" v-if="activeName === 'userPosts'" />
+        <CollectPosts :userId="userId" v-else />
+      </div>
     </div>
     <!-- 显示关注的人 -->
     <el-drawer
@@ -125,9 +132,9 @@
     :with-header="false"
     >
       <div class="actionBox">
-        <div class="actionBoxItem" style="color: #73767a;">修改密码</div>
+        <div class="actionBoxItem" style="color: #73767a;" @click="toUpdatePassword">修改密码</div>
         <el-divider />
-        <div class="actionBoxItem" style="color: red;">退出登录</div>
+        <div class="actionBoxItem" style="color: red;" @click="logout">退出登录</div>
       </div>
     </el-drawer>
   </div>
@@ -135,14 +142,16 @@
 
 <script>
 
-import { get } from '../../utils/axios'
+import { get, post } from '../../utils/axios'
 import { ElNotification } from 'element-plus'
 import UserPosts from './UserPosts.vue'
+import CollectPosts from './CollectPosts.vue'
 
 export default {
   name: 'UserInfo',
   components: {
-    UserPosts
+    UserPosts,
+    CollectPosts
   },
   data () {
     return {
@@ -155,7 +164,8 @@ export default {
       fansList: null,
       direction: "ttb",
       drawer: false,
-      actionBoxDirection: "btt"
+      actionBoxDirection: "btt",
+      activeName: 'userPosts',
     }
   },
   mounted () {
@@ -251,6 +261,41 @@ export default {
       // 打开操作框
       this.drawer = true
     },
+    toUpdatePassword () {
+      // 关闭操作框
+      this.drawer = false
+      console.log("修改密码")
+    },
+    logout () {
+      post('/user/login/loginOut')
+        .then(response => {
+          if (response.code === 200) {
+            ElNotification({
+              title: "成功",
+              message: "退出登录",
+              type: 'success',
+              duration: 2000,
+            })
+            // replace到首页
+            this.$router.replace({path: '/Home'})
+          } else {
+            ElNotification({
+              title: "错误: " + response.code,
+              message: response.msg,
+              type: 'error',
+              duration: 2000,
+            })
+          }
+        })
+        .catch(() => {
+            ElNotification({
+              title: "错误",
+              message: "发生错误!",
+              type: 'error',
+              duration: 2000,
+            })
+        })
+    },
   }
 }
 </script>
@@ -332,5 +377,17 @@ export default {
   font-size: 20px;
   font-weight:bolder;
   margin: 25px;
+}
+.demo-tabs {
+  height: 40px;
+}
+.postsBox {
+  height: calc(100% - 40px);
+}
+:deep(.el-tabs__item.is-active) {
+  color: #dca445;
+}
+:deep(.el-tabs__active-bar) {
+  background-color: #dca445;
 }
 </style>
