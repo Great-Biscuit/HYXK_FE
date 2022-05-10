@@ -21,20 +21,21 @@ export default {
   name: 'Footer',
   components: {
   },
-  data () {
-    return {
-      holderUserId: null
-    }
-  },
-  mounted () {
-    this.getHolderUserId()
-  },
   methods: {
-    getHolderUserId () {
+    // 跳到首页
+    toHome () {
+      this.$router.push({path: '/Home'})
+    },
+    // 当前用户登录就跳到用户页, 否则跳到登录页
+    toUserPage () {
       get('/user/action/getHolderUserId')
         .then(response => {
           if (response.code === 200) {
-            this.holderUserId = response.data
+            if(response.data === null || response.data === 0) {
+              this.$router.push({path: '/Login'})
+            } else {
+              this.$router.push({path: '/User/' + response.data})
+            }
           } else {
             ElNotification({
               title: "错误: " + response.code,
@@ -52,18 +53,6 @@ export default {
               duration: 2000,
             })
         })
-    },
-    // 跳到首页
-    toHome () {
-      this.$router.push({path: '/Home'})
-    },
-    // 当前用户登录就跳到用户页, 否则跳到登录页
-    toUserPage () {
-      if(this.holderUserId === null) {
-        this.$router.push({path: '/Login'})
-      } else {
-        this.$router.push({path: '/User/' + this.holderUserId})
-      }
     },
     // 跳转到发布帖子页面
     toAddPost () {

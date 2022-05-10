@@ -10,9 +10,9 @@
         @tab-click="handleSelect"
         :stretch="true"
       >
-        <el-tab-pane label="最新" name="0"></el-tab-pane>
         <el-tab-pane label="热门" name="1"></el-tab-pane>
-        <el-tab-pane label="关注" name="-1"></el-tab-pane>
+        <el-tab-pane label="最新" name="0"></el-tab-pane>
+        <el-tab-pane label="关注" name="-1" v-if="holderUserId !== null"></el-tab-pane>
       </el-tabs>
       <ul v-if="postList !== null && postList.length !== 0" v-infinite-scroll="load" class="infinite-list" style="overflow: auto">
         <li v-for="postVo in postList" :key="postVo" class="infinite-list-item">
@@ -54,7 +54,7 @@
 import Footer from './Footer.vue'
 import Header from './Header.vue'
 import PostIntro from './PostIntro.vue'
-import { post } from '../../utils/axios'
+import { get, post } from '../../utils/axios'
 import { ElNotification } from 'element-plus'
 
 export default {
@@ -71,15 +71,18 @@ export default {
       postList : [],
       drawer: false,
       direction: "ltr",
+      holderUserId: null,
+      userId: 0
     }
   },
   mounted() {
     this.load()
+    this.getHolderUserId()
   },
   methods: {
     load () {
       let formData = new FormData()
-      formData.append('userId', 0)
+      formData.append('userId', this.userId)
       formData.append('type', 0)
       formData.append('offset', this.count)
       formData.append('limit', 30)
@@ -109,6 +112,21 @@ export default {
         })
     },
     handleSelect () {
+      if (this.activeIndex === '-1') {
+        if (this.holderUserId === null) {
+          ElNotification({
+            title: "错误",
+            message: "未登录!",
+            type: 'error',
+            duration: 2000,
+          })
+          this.$router.push({path: '/Login'})
+        } else {
+          this.userId = this.holderUserId
+        }
+      } else {
+        this.userId = 0
+      }
       // 重置数据
       this.count = 0;
       this.postList = [];
@@ -116,6 +134,29 @@ export default {
     },
     openMenu () {
       this.drawer = true
+    },
+    getHolderUserId () {
+      get('/user/action/getHolderUserId')
+        .then(response => {
+          if (response.code === 200) {
+            this.holderUserId = response.data
+          } else {
+            ElNotification({
+              title: "错误: " + response.code,
+              message: "获取当前用户信息出错:" + response.msg,
+              type: 'error',
+              duration: 2000,
+            })
+          }
+        })
+        .catch(() => {
+            ElNotification({
+              title: "错误",
+              message: "发生错误!",
+              type: 'error',
+              duration: 2000,
+            })
+        })
     },
   }
 }
