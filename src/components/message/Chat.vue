@@ -11,20 +11,26 @@
         class="msg__wrapper"
       >
         <div class="msg" v-if="item.fromId === myUserId" style="float: right;"> <!-- 我发的消息 -->
-          <div class="user__msg">
-            <span>{{item.content}}</span>
+          <div class="user__wrapper">
+            <div class="user__msg">
+              <span>{{item.content}}</span>
+            </div>
+            <div class="user__header">
+              <el-avatar :size="30" :src="myHeaderUrl" />
+            </div>
           </div>
-          <div class="user__header">
-            <el-avatar :size="30" :src="myHeaderUrl" />
-          </div>
+          <div class="create__time" style="position: relative; right: 50px; text-align: right;">{{item.createTime}}</div>
         </div>
         <div class="msg" v-else> <!-- 对方发的 -->
-          <div class="user__header">
-            <el-avatar :size="30" :src="targetHeaderUrl" />
+          <div class="user__wrapper">
+            <div class="user__header">
+              <el-avatar :size="30" :src="targetHeaderUrl" />
+            </div>
+            <div class="user__msg">
+              <span>{{item.content}}</span>
+            </div>
           </div>
-          <div class="user__msg">
-            <span>{{item.content}}</span>
-          </div>
+          <div class="create__time" style="position: relative; left: 50px; top: 5px;">{{item.createTime}}</div>
         </div>
       </div>
     </div>
@@ -40,6 +46,7 @@
 <script>
 import { post } from '../../utils/axios'
 import { ElNotification } from 'element-plus'
+import moment from 'moment'
 
 export default {
   name: 'Chat',
@@ -64,10 +71,16 @@ export default {
         .then(response => {
           console.log('请求了')
           if (response.code === 200) {
-            this.targetNickname = response.data.target.nickname
-            this.targetHeaderUrl = response.data.target.headerUrl
-            this.myUserId = response.data.holder.id
-            this.myHeaderUrl = response.data.holder.headerUrl
+            const data = response.data
+            this.targetNickname = data.target.nickname
+            this.targetHeaderUrl = data.target.headerUrl
+            this.myUserId = data.holder.id
+            this.myHeaderUrl = data.holder.headerUrl
+            // 格式化时间
+            data.letterList.map((item) => {
+              item.createTime = moment(item.createTime).format('YYYY-MM-DD HH:mm:ss')
+              return item
+            })
             this.chatList = [...response.data.letterList]
             this.$nextTick(() => {
               const scrollHeight = this.$refs.msgBox.scrollHeight // 聊天框整体高度
@@ -117,7 +130,8 @@ export default {
               id: '',
               fromId: this.myUserId,
               headerUrl: this.myHeaderUrl,
-              content: this.contentText
+              content: this.contentText,
+              createTime: moment().format('YYYY-MM-DD HH:mm:ss')
             }
             this.chatList.push(newChat)
             this.$nextTick(() => {
@@ -196,10 +210,12 @@ export default {
     clear: both;
   }
   .msg{
-    display: flex;
     margin-top: 20px;
     max-width: calc(100vw - 50px);
     text-align: left;
+  }
+  .user__wrapper{
+    display: flex;
   }
   .user__header{
     width: 30px;
@@ -211,6 +227,9 @@ export default {
     font-size: 16px;
     border-radius: 12px;
     background: #fff;
+  }
+  .create__time{
+    font-size: 12px;
   }
   .input__box{
     position: fixed;
@@ -242,9 +261,14 @@ export default {
     border-color: #337ecc !important;
     background-color: #337ecc !important;
   }
-  :deep(.el-button, .el-button:hover){
+  :deep(.el-button){
     height: 30px;
     font-size: 14px;
+    color: #fff;
+    border-color: #a0cfff;
+    background-color: #a0cfff;
+  }
+  :deep(.el-button:hover) {
     color: #fff;
     border-color: #a0cfff;
     background-color: #a0cfff;

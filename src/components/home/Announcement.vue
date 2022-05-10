@@ -125,7 +125,8 @@ export default {
 }
 .el-footer {
   height: 49px;
-  padding: 10px 15px;
+  line-height: 49px;
+  border-top: 1px solid #a1a1a1;
 }
 .infinite-list {
   height: 100%;

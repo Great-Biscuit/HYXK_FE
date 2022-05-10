@@ -142,13 +142,14 @@ export default {
 }
 .el-footer {
   height: 49px;
-  padding: 10px 15px;
+  line-height: 49px;
+  border-top: 1px solid #a1a1a1;
 }
 .infinite-list {
-  height: 94%;
+  height: 94.5%;
   padding: 0;
   list-style: none;
-  margin: 1%;
+  margin-top: 1%;
 }
 .infinite-list .infinite-list-item {
   display: flex;

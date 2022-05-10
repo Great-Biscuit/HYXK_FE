@@ -326,8 +326,8 @@ export default {
         // 为空则为对当前用户页显示的用户的操作
         this.userInfo.hasFollow = false
       } else {
-        // 不为空则为对关注或粉丝列表中的用户的操作       有问题！！！！！
-        entityVo.hasFollow = false
+        // 不为空则为对关注或粉丝列表中的用户的操作
+        entityVo.hasFollowed = false
       }
     },
     // 关注
@@ -336,8 +336,8 @@ export default {
         // 为空则为对当前用户页显示的用户的操作
         this.userInfo.hasFollow = true
       } else {
-        // 不为空则为对关注或粉丝列表中的用户的操作       有问题！！！！！
-        entityVo.hasFollow = true
+        // 不为空则为对关注或粉丝列表中的用户的操作
+        entityVo.hasFollowed = true
       }
     }
   }
@@ -378,6 +378,10 @@ export default {
   margin-top: 20px;
   padding: 15px!important;
   background: #626262cf;
+}
+:deep(.el-button:hover){
+  color: white;
+  background-color: #626262cf;
 }
 .white-bolder-font {
   font-family:黑体;

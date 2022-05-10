@@ -67,8 +67,8 @@ export default {
   display: flex;
 }
 .message{
-  /*width: calc(100% - 110px);*/
-  width: 100%;
+  width: calc(100% - 110px);
+  /*width: 100%;*/
   box-sizing: border-box;
 }
 .postTitle{

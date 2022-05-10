@@ -15,7 +15,7 @@
       <div class="post-info" v-if="postInfo != null">
         <h2 style="margin: 10px;">{{ postInfo.post.title }}</h2>
         <div class="author">
-          <el-avatar :size="39" :src="postInfo.author.headerUrl" />
+          <el-avatar :size="39" :src="postInfo.author.headerUrl" @click="this.$router.push(`/User/${postInfo.author.id}`)" />
           <span class="nickname">{{postInfo.author.nickname}}</span>
         </div>
         <el-divider style="margin: 0;"></el-divider>

@@ -76,6 +76,7 @@
 
 import { post } from '../../utils/axios'
 import { ElNotification } from 'element-plus'
+import moment from 'moment'
 
 export default {
   name: 'MessageHome',
@@ -97,7 +98,13 @@ export default {
       post('/user/message/home')
         .then(response => {
           if (response.code === 200) {
-            this.messageData = response.data
+            const data = response.data
+            // 格式化时间
+            data.conversationList = data.conversationList.map((conversation) => {
+              conversation.lastLetter.createTime = moment(conversation.lastLetter.createTime).format('MM-DD')
+              return conversation
+            })
+            this.messageData = data
           } else {
             ElNotification({
               title: "错误: " + response.code,
