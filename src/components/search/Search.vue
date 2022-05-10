@@ -7,7 +7,7 @@
       <div class="search__input">
         <el-input
           v-model="searchText"
-          placeholder="搜索笔记"
+          placeholder="搜索帖子"
           class="input-with-select"
           @input="inputText"
           @keyup.enter="handleSearchClick"
@@ -118,7 +118,7 @@ export default {
     width: 262px;
     line-height: 30px;
     border-radius: 15px;
-    border: 1px solid #75a297;
+    border: 1px solid #337ecc;
     padding: 0 10px;
   }
   :deep(.el-input-group__prepend){
@@ -147,8 +147,8 @@ export default {
     right: 0;
   }
   .hasText{
-    border-color: #75a297 !important;
-    background-color: #75a297 !important;
+    border-color: #337ecc !important;
+    background-color: #337ecc !important;
   }
   .search__btn{
     display: inline-block;
@@ -159,7 +159,7 @@ export default {
     border-radius: 15px;
     text-align: center;
     font-size: 14px;
-    background: #c2dbd4;
+    background: #a0cfff;
     color: #fff;
   }
   :deep(.el-input-group--prepend .el-input__inner){
@@ -182,7 +182,7 @@ export default {
     padding: 0 20px;
   }
   .el-select-dropdown__item.selected{
-    color: #75a297;
+    color: #337ecc;
   }
   .main{
     position: relative;

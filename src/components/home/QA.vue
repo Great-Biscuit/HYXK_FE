@@ -10,9 +10,9 @@
         @tab-click="handleSelect"
         :stretch="true"
       >
-        <el-tab-pane label="最新" name="0"></el-tab-pane>
-        <el-tab-pane label="热门" name="1"></el-tab-pane>
-        <el-tab-pane label="关注" name="-1"></el-tab-pane>
+        <el-tab-pane label="全部" name="0"></el-tab-pane>
+        <el-tab-pane label="已解决" name="1"></el-tab-pane>
+        <el-tab-pane label="未解决" name="2"></el-tab-pane>
       </el-tabs>
       <ul v-if="postList !== null && postList.length !== 0" v-infinite-scroll="load" class="infinite-list" style="overflow: auto">
         <li v-for="postVo in postList" :key="postVo" class="infinite-list-item">
@@ -66,7 +66,7 @@ export default {
   },
   data () {
     return {
-      activeIndex : "1",
+      activeIndex : "0",
       count : 0,
       postList : [],
       drawer: false,
@@ -80,7 +80,7 @@ export default {
     load () {
       let formData = new FormData()
       formData.append('userId', 0)
-      formData.append('type', 0)
+      formData.append('type', 2)
       formData.append('offset', this.count)
       formData.append('limit', 30)
       formData.append('orderMode', this.activeIndex)

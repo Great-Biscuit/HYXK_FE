@@ -107,11 +107,10 @@ export default {
       if (!this.isInput || this.contentText === '') {
         return
       }
-      const chat = {
-        toId: this.$route.params.targetId,
-        content: this.contentText
-      }
-      post('/user/message/send', chat)
+      let formData = new FormData()
+      formData.append('toId', this.$route.params.targetId)
+      formData.append('content', this.contentText)
+      post('/user/message/send', formData)
         .then(response => {
           if (response.code === 200) {
             const newChat = {
@@ -168,7 +167,7 @@ export default {
     margin: 0;
     padding: 0;
     text-align: center;
-    background: #75a297;
+    background: #337ecc;
     font-size: 16px;
   }
   .back__icon{
@@ -240,15 +239,15 @@ export default {
     font-size: 14px;
   }
   .inputting{
-    border-color: #75a297 !important;
-    background-color: #75a297 !important;
+    border-color: #337ecc !important;
+    background-color: #337ecc !important;
   }
   :deep(.el-button, .el-button:hover){
     height: 30px;
     font-size: 14px;
     color: #fff;
-    border-color: #c2dbd4;
-    background-color: #c2dbd4;
+    border-color: #a0cfff;
+    background-color: #a0cfff;
   }
   :deep(.el-button.is-round){
     margin-left: 5px;

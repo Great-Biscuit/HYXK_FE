@@ -204,7 +204,7 @@ export default {
       formData.append('userId', this.userId)
       formData.append('offset', 0)
       formData.append('limit', 100) //查询100个
-      get('/user/follow/followList', formData)
+      post('/user/follow/followList', formData)
         .then(response => {
           if (response.code === 200) {
             // 每次取8条
@@ -234,7 +234,7 @@ export default {
       formData.append('userId', this.userId)
       formData.append('offset', 0)
       formData.append('limit', 100) //查询100个
-      get('/user/follow/fansList', formData)
+      post('/user/follow/fansList', formData)
         .then(response => {
           if (response.code === 200) {
             // 每次取8条

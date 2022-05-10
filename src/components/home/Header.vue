@@ -4,7 +4,7 @@
       <i class="iconfont">&#xe684;</i>
     </el-col>
     <el-col :span="3"></el-col>
-    <el-col :span="12" style="font-size : 120%;">主页</el-col>
+    <el-col :span="12" style="font-size : 120%;">{{headerName}}</el-col>
     <el-col :span="3">
       <i class="iconfont" @click.prevent="this.$router.push('/Search')">&#xe65c;</i>
     </el-col>
@@ -23,6 +23,9 @@ import { ElNotification } from 'element-plus'
 
 export default {
   name: 'Header',
+  props: [
+    'headerName'
+  ],
   components: {
   },
   data () {
