@@ -10,7 +10,7 @@
 
 <script>
 
-import { get } from '../../utils/axios'
+import { post } from '../../utils/axios'
 import { ElNotification } from 'element-plus'
 import PostIntroForUserInfo from './PostIntroForUserInfo.vue'
 
@@ -34,7 +34,7 @@ export default {
       formData.append('userId', this.userId)
       formData.append('offset', this.count)
       formData.append('limit', 8)
-      get('/post/action/getCollectedPostList', formData)
+      post('/post/action/getCollectedPostList', formData)
         .then(response => {
           if (response.code === 200) {
             // 每次取8条
