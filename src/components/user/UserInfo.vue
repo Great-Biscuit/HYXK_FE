@@ -27,10 +27,10 @@
               <el-button round class="user-info-button">
               <span class="white-bolder-font">私信</span>
             </el-button>
-            <el-button round class="user-info-button" v-if="userInfo.hasFollow">
+            <el-button round class="user-info-button" v-if="userInfo.hasFollow" @click="unFollowUser(null)">
               <span class="white-bolder-font" style="color: #333333b3;">已关注</span>
             </el-button>
-            <el-button round class="user-info-button" v-else>
+            <el-button round class="user-info-button" v-else @click="followUser(null)">
               <span class="white-bolder-font">关注</span>
             </el-button>
             </span>
@@ -86,7 +86,31 @@
     >
       <el-empty description="还没有关注Ta哟~" v-if="followeeList === null || followeeList.length === 0" />
       <div v-else class="fansOrFollowList">
-
+        <el-scrollbar>
+          <div v-for="followeeVo in followeeList" :key="followeeVo" class="fansOrFollowItem">
+            <el-row style="align-items: center;">
+              <el-col :span="4">
+                <el-avatar :size="50" :src="followeeVo.user.headerUrl" style="margin: 3px;" />
+              </el-col>
+              <el-col :span="14" class="fansOrFollowNickname">
+                <span>{{ followeeVo.user.nickname }}</span>
+                <!-- 0-未知 1-男 2-女 -->
+                <span class="iconfont white-bolder-font" v-if="followeeVo.user.gender === 0" style="margin-left: 3px;padding: 3px;border-radius: 50%;background-color: #7a7a7a;">&#xe65e;</span>
+                <span class="iconfont white-bolder-font" v-else-if="followeeVo.user.gender === 1" style="margin-left: 3px;padding: 3px;border-radius: 50%;background-color: #00a9ff;">&#xe68d;</span>
+                <span class="iconfont white-bolder-font" v-else style="margin-left: 3px;padding: 3px;border-radius: 50%;background-color: #fb9b9b;">&#xe68b;</span>
+              </el-col>
+              <!-- 如果是当前用户自己, 就不显示任何内容 -->
+              <el-col :span="6" style="text-align: center;" v-if="holderUserId !== followeeVo.user.id">
+                <el-button round class="user-info-button" v-if="followeeVo.hasFollowed">
+                  <span class="white-bolder-font" style="color: #333333b3;" @click="unFollowUser(followeeVo)">已关注</span>
+                </el-button>
+                <el-button round class="user-info-button" v-else>
+                  <span class="white-bolder-font" @click="followUser(followeeVo)">关注</span>
+                </el-button>
+              </el-col>
+            </el-row>
+          </div>
+        </el-scrollbar>
       </div>
     </el-drawer>
     <!-- 显示粉丝 -->
@@ -112,12 +136,13 @@
                 <span class="iconfont white-bolder-font" v-else-if="fansVo.user.gender === 1" style="margin-left: 3px;padding: 3px;border-radius: 50%;background-color: #00a9ff;">&#xe68d;</span>
                 <span class="iconfont white-bolder-font" v-else style="margin-left: 3px;padding: 3px;border-radius: 50%;background-color: #fb9b9b;">&#xe68b;</span>
               </el-col>
-              <el-col :span="6" style="text-align: center;">
+              <!-- 如果是当前用户自己, 就不显示任何内容 -->
+              <el-col :span="6" style="text-align: center;" v-if="holderUserId !== fansVo.user.id">
                 <el-button round class="user-info-button" v-if="fansVo.hasFollowed">
-                  <span class="white-bolder-font" style="color: #333333b3;">已关注</span>
+                  <span class="white-bolder-font" style="color: #333333b3;" @click="unFollowUser(fansVo)">已关注</span>
                 </el-button>
                 <el-button round class="user-info-button" v-else>
-                  <span class="white-bolder-font">关注</span>
+                  <span class="white-bolder-font" @click="followUser(fansVo)">关注</span>
                 </el-button>
               </el-col>
             </el-row>
@@ -177,6 +202,7 @@ export default {
       get('/user/action/getUserInfo/' + this.userId)
         .then(response => {
           if (response.code === 200) {
+            console.log(response)
             this.userInfo = response.data
             this.holderUserId = response.msg
           } else {
@@ -203,11 +229,10 @@ export default {
       let formData = new FormData()
       formData.append('userId', this.userId)
       formData.append('offset', 0)
-      formData.append('limit', 100) //查询100个
+      formData.append('limit', 1000000) //查询1000000个
       post('/user/follow/followList', formData)
         .then(response => {
           if (response.code === 200) {
-            // 每次取8条
             this.followeeList = response.data;
           } else {
             ElNotification({
@@ -233,11 +258,10 @@ export default {
       let formData = new FormData()
       formData.append('userId', this.userId)
       formData.append('offset', 0)
-      formData.append('limit', 100) //查询100个
+      formData.append('limit', 1000000) //查询1000000个
       post('/user/follow/fansList', formData)
         .then(response => {
           if (response.code === 200) {
-            // 每次取8条
             this.fansList = response.data;
           } else {
             ElNotification({
@@ -296,6 +320,26 @@ export default {
             })
         })
     },
+    // 取消关注
+    unFollowUser (entityVo) {
+      if (entityVo === null) {
+        // 为空则为对当前用户页显示的用户的操作
+        this.userInfo.hasFollow = false
+      } else {
+        // 不为空则为对关注或粉丝列表中的用户的操作       有问题！！！！！
+        entityVo.hasFollow = false
+      }
+    },
+    // 关注
+    followUser (entityVo) {
+      if (entityVo === null) {
+        // 为空则为对当前用户页显示的用户的操作
+        this.userInfo.hasFollow = true
+      } else {
+        // 不为空则为对关注或粉丝列表中的用户的操作       有问题！！！！！
+        entityVo.hasFollow = true
+      }
+    }
   }
 }
 </script>
