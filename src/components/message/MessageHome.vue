@@ -117,13 +117,6 @@ export default {
         })
     },
     toChat (targetId) {
-      // 将当前点击的私信未读数量置为0（可删除，后台会有相应操作）
-      //letterList.value.forEach((item) => {
-      //  if (item.from.id === userId) {
-      //    unreadLetter.value -= item.letter.unreadCount // 减去当前已读私信数量
-      //    item.letter.unreadCount = 0 // 当前私信未读数量置为0
-      //  }
-      //})
       this.$router.push(`/chat/${targetId}`)
     }
   }

@@ -60,14 +60,12 @@ export default {
     }
   },
   mounted () {
-    console.log(this.$props.comment)
     this.handleDataInit()
     this.icon = this.$props.comment.hasLike ? '&#xe668;' : '&#xe669;'
   },
   methods: {
     // 初始化数据
     handleDataInit () {
-      console.log('回复列表', this.$props.comment.replyVoList)
       if (this.$props.comment.replyVoList) {
         this.$props.comment.replyVoList.forEach((item, index) => {
           if (item.hasLike) {
