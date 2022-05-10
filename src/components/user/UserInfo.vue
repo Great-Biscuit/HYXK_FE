@@ -25,7 +25,7 @@
             </el-button>
             <span v-else>
               <el-button round class="user-info-button">
-              <span class="white-bolder-font">私信</span>
+              <span class="white-bolder-font" @click="this.$router.push(`/chat/${userId}`)">私信</span>
             </el-button>
             <el-button round class="user-info-button" v-if="userInfo.hasFollow" @click="unFollowUser(null)">
               <span class="white-bolder-font" style="color: #333333b3;">已关注</span>

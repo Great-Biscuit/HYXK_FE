@@ -14,37 +14,39 @@
         >
           <template #prepend>
             <el-select v-model="type">
-              <el-option label="美食笔记" value="1" />
-              <el-option label="探店笔记" value="2" />
-              <el-option label="全部" value="0" />
+              <el-option label="全部" value="全部" />
+              <el-option label="文章" value="文章" />
+              <el-option label="公告" value="公告" />
+              <el-option label="问答" value="问答" />
+              <el-option label="表白墙" value="表白墙" />
             </el-select>
           </template>
         </el-input>
       </div>
       <span :class="{'hasText': hasText, 'search__btn': true}" @click="handleSearchClick">搜索</span>
     </div>
-    <div class="main" ref="mainDiv">
+    <div class="main">
       <el-empty description="没有搜索到相关内容" v-if="isEmpty" />
       <div v-else>
-        <!--<div class="wrapper">
-          <div
-            v-for="item in noteList"
-            :key="item.note.id"
-            class="content__wrapper"
-          >
-            <contents :notes="item" @changeLiked="changeLiked" />
-          </div>
-        </div>-->
+        <ul v-if="postList !== null && postList.length !== 0" v-infinite-scroll="load" class="infinite-list" style="overflow: auto">
+          <li v-for="postVo in postList" :key="postVo" class="infinite-list-item">
+            <PostIntro :postVo="postVo" />
+          </li>
+        </ul>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import PostIntro from '../home/PostIntro.vue'
+import { post } from '../../utils/axios'
+import { ElNotification } from 'element-plus'
+
 export default {
   name: 'Search',
   components: {
-
+    PostIntro
   },
   data () {
     return {
@@ -53,6 +55,7 @@ export default {
       hasText: false, // 搜索框内有无内容
       postList: [], // 帖子列表
       isEmpty: false, // 是否没有搜索到相关帖子
+      current: 0,
     }
   },
   methods: {
@@ -71,16 +74,58 @@ export default {
         return
       }
       // 获取帖子列表
-      console.log('在此处获取帖子列表')
-      // 帖子列表为空，设置空状态；否则展示帖子列表
-      if (!this.postList.length) {
-        this.isEmpty = true
-      } else {
-        this.isEmpty = false
-      }
-      this.$refs.mainDiv.scrollTop = 0
+      this.postList = []
+      this.current = 0
+      this.load()
     },
-
+    load () {
+      console.log('请求了')
+      let formData = new FormData()
+      formData.append('keyword', this.searchText)
+      formData.append('current', this.current)
+      formData.append('limit', 20)
+      let postType = null
+      if (this.type === '全部') {
+        postType = null
+      } else if (this.type === '文章') {
+        postType = 0
+      } else if (this.type === '公告') {
+        postType = 1
+      } else if (this.type === '问答') {
+        postType = 2
+      } else if (this.type === '表白墙') {
+        postType = 3
+      }
+      formData.append('type', postType)
+      post('/post/search/execute', formData)
+        .then(response => {
+          if (response.code === 200) {
+            this.current++
+            this.postList.push(...response.data);
+            // 帖子列表为空，设置空状态；否则展示帖子列表
+            if (!this.postList.length) {
+              this.isEmpty = true
+            } else {
+              this.isEmpty = false
+            }
+          } else {
+            ElNotification({
+              title: "错误: " + response.code,
+              message: response.msg,
+              type: 'error',
+              duration: 2000,
+            })
+          }
+        })
+        .catch(() => {
+            ElNotification({
+              title: "错误",
+              message: "发生错误!",
+              type: 'error',
+              duration: 2000,
+            })
+        })
+    },
   }
 }
 </script>
@@ -191,19 +236,24 @@ export default {
     overflow: auto;
     background: #f1f1f1;
   }
-  .wrapper{
-    padding: 0 2px;
-    overflow: auto;
-    column-count: 2;
-    column-gap: 1px;
-  }
-  .content__wrapper{
-    margin-bottom: 2px;
-    break-inside: avoid;
-  }
   .noMore{
     width: 100%;
     height: 40px;
     line-height: 40px;
+  }
+  .infinite-list {
+    height: calc(100vh - 50px);
+    padding: 0;
+    list-style: none;
+    margin: 0;
+  }
+  .infinite-list .infinite-list-item {
+    display: flex;
+    height: 120px;
+    margin: 10px;
+    color: var(--el-color-primary);
+  }
+  .infinite-list .infinite-list-item + .list-item {
+    margin-top: 10px;
   }
 </style>
