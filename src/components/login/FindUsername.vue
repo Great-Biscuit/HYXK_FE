@@ -135,6 +135,13 @@ export default {
 .find-username-input >>> .el-input__inner:focus {
   border-bottom: 1px solid #2891fa;
 }
+/* 修改校验错误时样式 */
+:deep(.el-form-item.is-error .el-input__inner){
+  height: inherit;
+  line-height: inherit;
+  box-shadow: none !important;
+  border-bottom: 1px solid var(--el-color-danger);
+}
 .tips {
   width: 100%;
   font-size: 14px;

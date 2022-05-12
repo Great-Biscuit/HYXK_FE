@@ -127,6 +127,7 @@ export default {
 	width:100vw;
 	height:100vh;
   margin: -8px;
+  overflow: hidden;
 }
 .el-header {
   height: 50px;

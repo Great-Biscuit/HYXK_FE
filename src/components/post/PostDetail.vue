@@ -17,6 +17,7 @@
         <div class="author">
           <el-avatar :size="39" :src="postInfo.author.headerUrl" @click="this.$router.push(`/User/${postInfo.author.id}`)" />
           <span class="nickname">{{postInfo.author.nickname}}</span>
+          <span class="time">{{postInfo.post.createTime}}</span>
         </div>
         <el-divider style="margin: 0;"></el-divider>
         <div class="content" v-html="postInfo.post.htmlContent"></div>
@@ -100,7 +101,7 @@
           <el-input size="default" v-model="comment.content" placeholder="说点什么吧~" />
         </el-col>
         <el-col :span="6">
-          <el-button size="default" type="primary" plain @click="sendComment">发送</el-button>
+          <el-button size="default" type="primary" round plain @click="sendComment">发送</el-button>
         </el-col>
       </el-row>
     </el-drawer>
@@ -112,6 +113,7 @@
 import { get, post } from '../../utils/axios'
 import { ElNotification } from 'element-plus'
 import Comment from '../post/Comment.vue'
+import moment from 'moment'
 
 export default {
   name: 'PostDetail',
@@ -145,7 +147,41 @@ export default {
         .then(response => {
           if (response.code === 200) {
             this.holderId = response.msg
-            this.postInfo = response.data
+            const detail = response.data
+
+            const currentTime = moment()
+            // 格式化评论、回复的时间
+            detail.commentVoList.map((comment) => {
+              if (currentTime.valueOf() - moment(comment.commentTime).valueOf() < 129600000) { // 36小时内，显示xx秒/分钟/小时/天前
+                comment.commentTime = moment(comment.commentTime).fromNow()
+              } else if (currentTime.get('year') === moment(comment.commentTime).get('year')) { // 超过36小时，显示月日
+                comment.commentTime = moment(comment.commentTime).format('MM-DD')
+              } else { // 超过一年，显示年月日
+                comment.commentTime = moment(comment.commentTime).format('YYYY-MM-DD')
+              }
+              comment.replyVoList.map((item) => {
+                if (currentTime.valueOf() - moment(item.replyTime).valueOf() < 129600000) { // 36小时内
+                  item.replyTime = moment(item.replyTime).fromNow()
+                } else if (currentTime.get('year') === moment(item.replyTime).get('year')) { // 超过36小时，显示月日
+                  item.replyTime = moment(item.replyTime).format('MM-DD')
+                } else { // 超过一年，显示年月日
+                  item.replyTime = moment(item.replyTime).format('YYYY-MM-DD')
+                }
+                return item
+              })
+              return comment
+            })
+            // 格式化笔记时间
+            console.log(moment(detail.post.createTime).format('YY-MM-DD HH:mm:ss'))
+            if (currentTime.valueOf() - moment(detail.post.createTime).valueOf() < 129600000) { // 36小时内，显示xx秒/分钟/小时/天前
+              detail.post.createTime = moment(detail.post.createTime).fromNow()
+            } else if (currentTime.get('year') === moment(detail.post.createTime).get('year')) { // 超过36小时，显示月日
+              detail.post.createTime = moment(detail.post.createTime).format('MM-DD')
+            } else { // 超过一年，显示年月日
+              detail.post.createTime = moment(detail.post.createTime).format('YYYY-MM-DD')
+            }
+
+            this.postInfo = detail
           } else {
             ElNotification({
               title: "错误: " + response.code,
@@ -333,6 +369,9 @@ export default {
     },
     // 发送评论
     sendComment () {
+      if (this.comment.content === '') {
+        return
+      }
       let formData = new FormData()
       formData.append('entityType', this.comment.entityType)
       formData.append('entityId', this.comment.entityId)
@@ -433,8 +472,10 @@ export default {
   font-size: 25px;
 }
 .author{
+  position: relative;
   width: 92%;
   height: 39px;
+  line-height: 39px;
   margin: 4%;
 }
 .nickname{
@@ -446,6 +487,13 @@ export default {
   overflow: hidden;     /*隐藏超出的部分*/
   text-overflow: ellipsis;  /*超出的部分用省略号替代*/
 }
+.time{
+  position: absolute;
+  right: 0;
+  margin-left: 20px;
+  font-size: 12px;
+  color: #a1a1a1;
+}
 .content {
   width: 96%;
   margin: 2%;
@@ -455,5 +503,18 @@ export default {
 }
 .comment-el-row {
   padding: 0;
+}
+:deep(.el-input__inner) {
+  border-radius: 16px;
+  box-shadow: none;
+  background: #f1f1f1;
+}
+:deep(.el-input__inner:focus) {
+  box-shadow: none;
+}
+:deep(.el-button:focus, .el-button:hover, el-button:active){
+  color: var(--el-button-text-color);
+  border-color: var(--el-button-border-color);
+  background-color: var(--el-button-bg-color);
 }
 </style>

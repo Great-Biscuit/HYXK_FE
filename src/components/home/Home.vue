@@ -168,6 +168,7 @@ export default {
 	width:100vw;
 	height:100vh;
   margin: -8px;
+  overflow: hidden;
 }
 .el-header {
   height: 50px;
@@ -187,10 +188,10 @@ export default {
   border-top: 1px solid #a1a1a1;
 }
 .infinite-list {
-  height: 94.5%;
+  height: 95%;
   padding: 0;
   list-style: none;
-  margin-top: 1%;
+  margin-top: 0;
 }
 .infinite-list .infinite-list-item {
   display: flex;

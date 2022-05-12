@@ -41,6 +41,20 @@
             placeholder="邮箱用于激活账号" 
             />
           </el-form-item>
+
+          <el-form-item label="验证码" prop="code">
+            <el-input type="text" style="--el-input-focus-border-color: #ffffff; width: 70% " class="find-password-input" 
+            v-model="registerForm.code" placeholder="请输入验证码" 
+            />
+            <el-button style="width: 30%" 
+            type="primary" plain 
+            :disabled="disabled=!show"
+            v-on:click="sendCode"
+            >
+              <span v-show="show">获取验证码</span>
+              <span v-show="!show" class="count">{{count}} s</span>
+            </el-button>
+          </el-form-item>
           <br/>
 
           <el-form-item>
@@ -74,12 +88,42 @@
 .el-input >>> .el-input__inner {
   background-color: transparent;
 }
+
+/*取消elementUI输入框组件自带高度和阴影*/
+:deep(.el-input__inner){
+  height: inherit;
+  line-height: inherit;
+  box-shadow: none;
+  border-radius: 0;
+  border-bottom: 1px solid #f1f1f1;
+}
+:deep(.el-input__inner:focus){
+  box-shadow: none;
+  border-bottom: 1px solid #2891fa;
+}
+:deep(.el-form-item.is-error .el-input__inner){
+  height: inherit;
+  line-height: inherit;
+  box-shadow: none !important;
+  border-bottom: 1px solid var(--el-color-danger);
+}
+/*修改elementUI输入框组件验证失败提示的样式*/
+:deep(.el-form-item__error){
+  font-size: 12px;
+  /*top: 30px;*/
+}
+  
 .tips {
   font-size: 14px;
   color: #999;
   letter-spacing: .4px;
   line-height: 30px;
   text-align: center;
+}
+
+.el-link.el-link--primary{
+  position: relative;
+  top: -2px;
 }
 </style>
 
@@ -145,12 +189,30 @@ export default {
       }
     };
 
+    // 验证码格式
+    let codeReg = /^\d{6}$/;
+    const validateCode = (rule, value, callback) => {
+      if (value === '') {
+          callback(new Error('请输入验证码!'));
+      } else {
+        // 验证验证码格式
+        if (!codeReg.test(value)) {
+          callback(new Error('请输入有效验证码!'));
+        }
+        callback();
+      }
+    };
+
     return {
+      show: true,  // 初始启用按钮
+      count: '',   // 初始化次数
+      timer: null,
       registerForm: {
         username: '',
         password: '',
         checkPassword: '',
-        email: ''
+        email: '',
+        code: ''
       },
       rules: {
         username: [
@@ -171,10 +233,60 @@ export default {
           { required: true, message: '请输入邮箱', trigger: 'blur' },
           { validator: validateEmail, trigger: 'blur' }
         ],
+        code: [
+          { required: true, message: '请输入验证码', trigger: 'blur' },
+          { min: 6, max: 6, message: '长度为 6 个字符', trigger: 'blur' },
+          { validator: validateCode, trigger: 'blur' }
+        ]
       }
     }
   },
   methods: {
+    sendCode () {
+      const TIME_COUNT = 60; //更改倒计时时间
+      if (!this.timer) {
+        this.count = TIME_COUNT;
+        this.show = false;
+        this.timer = setInterval(() => {
+          if (this.count > 0 && this.count <= TIME_COUNT) {
+            this.count--;
+          } else {
+            this.show = true;
+            clearInterval(this.timer);  // 清除定时器
+            this.timer = null;
+          }
+        }, 1000)
+      }
+
+      let formData = new FormData()
+      formData.append('email', this.registerForm.email)
+      post('/user/login/getVerificationCode', formData)
+        .then(response => {
+          if (response.code === 200) {
+            ElNotification({
+              title: "成功发送",
+              message: "成功发送验证码, 请注意查收!",
+              type: 'success',
+              duration: 2000,
+            })
+          } else {
+            ElNotification({
+              title: "错误: " + response.code,
+              message: response.msg,
+              type: 'error',
+              duration: 2000,
+            })
+          }
+        })
+        .catch(() => {
+            ElNotification({
+              title: "错误",
+              message: "发生错误!请重试!",
+              type: 'error',
+              duration: 2000,
+            })
+        })
+    },
     register () {
       let formData = new FormData()
       formData.append('username', this.registerForm.username)

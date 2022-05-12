@@ -16,7 +16,7 @@
         <el-col :span="6">
           <!-- 点赞 -->
           <el-badge :value="messageData.noticeUnreadCount.like" :max="99" class="badge-item" :hidden="messageData.noticeUnreadCount.like===0">
-            <i class="iconfont notice-icon" style="color: red;">&#xe71a;</i>
+            <i class="iconfont notice-icon" style="color: red;" @click="this.$router.push('/LikeNotice')">&#xe71a;</i>
           </el-badge>
           <br/>
           <span style="font-size: 12px;font-weight:bolder;color: #787777;">点赞</span>
@@ -24,15 +24,15 @@
         <el-col :span="6">
           <!-- 评论 -->
           <el-badge :value="messageData.noticeUnreadCount.comment" :max="99" class="badge-item" :hidden="messageData.noticeUnreadCount.comment===0">
-            <i class="iconfont notice-icon" style="color: #007a80c9;">&#xe8c5;</i>
+            <i class="iconfont notice-icon" style="color: #007a80c9;" @click="this.$router.push('/CommentNotice')">&#xe8c5;</i>
           </el-badge>
           <br/>
-          <span style="font-size: 12px;font-weight:bolder;color: #787777;">评论</span>
+          <span style="font-size: 12px;font-weight:bolder;color: #787777;" >评论</span>
         </el-col>
         <el-col :span="6">
           <!-- 收藏 -->
           <el-badge :value="messageData.noticeUnreadCount.collect" :max="99" class="badge-item" :hidden="messageData.noticeUnreadCount.collect===0">
-            <i class="iconfont notice-icon" style="color: #ff9c00;">&#xe64b;</i>
+            <i class="iconfont notice-icon" style="color: #ff9c00;" @click="this.$router.push('/CollectNotice')">&#xe64b;</i>
           </el-badge>
           <br/>
           <span style="font-size: 12px;font-weight:bolder;color: #787777;">收藏</span>
@@ -40,7 +40,7 @@
         <el-col :span="6">
           <!-- 关注 -->
           <el-badge :value="messageData.noticeUnreadCount.follow" :max="99" class="badge-item" :hidden="messageData.noticeUnreadCount.follow===0">
-            <i class="iconfont notice-icon" style="color: #00c7ff;">&#xe608;</i>
+            <i class="iconfont notice-icon" style="color: #00c7ff;" @click="this.$router.push('/FollowNotice')">&#xe608;</i>
           </el-badge>
           <br/>
           <span style="font-size: 12px;font-weight:bolder;color: #787777;">关注</span>
@@ -48,6 +48,7 @@
       </el-row>
     </div>
     <div style="width: 100%;height: 1%;background-color: #a5a5a524;"></div>
+    <div class="letter__bar">聊天列表</div>
     <div class="letter" v-if="messageData != null">
       <el-empty description="没有私信哟~" v-if="messageData.conversationList === null || messageData.conversationList.length === 0" />
       <el-scrollbar v-else>
@@ -58,7 +59,7 @@
           <div class="letter-item-right">
             <div>
               <span class="letter-target">{{ conversationVo.targetUser.nickname }}</span>
-              <span class="letter-time">04-06</span>
+              <span class="letter-time">{{ conversationVo.lastLetter.createTime }}</span>
             </div>
             <div>
               <span class="letter-content">{{ conversationVo.lastLetter.content }}</span>
@@ -99,9 +100,21 @@ export default {
         .then(response => {
           if (response.code === 200) {
             const data = response.data
+            console.log('列表', data)
             // 格式化时间
             data.conversationList = data.conversationList.map((conversation) => {
-              conversation.lastLetter.createTime = moment(conversation.lastLetter.createTime).format('MM-DD')
+              const currentTime = moment()
+              const isCurrentDay = currentTime.get('date') === moment(conversation.lastLetter.createTime).get('date') // 日期是否为今天
+              const isCurrentMonth = currentTime.get('month') === moment(conversation.lastLetter.createTime).get('month') // 日期是否为本月
+              const isCurrentYear = currentTime.get('year') === moment(conversation.lastLetter.createTime).get('year') // 日期是否为今年
+              if (isCurrentDay && isCurrentMonth && isCurrentYear) { // 今天内的私信，显示时间
+                conversation.lastLetter.createTime = moment(conversation.lastLetter.createTime).format('HH:mm')
+              } else if (isCurrentYear) { // 今年内，显示具体月日
+                conversation.lastLetter.createTime = moment(conversation.lastLetter.createTime).format('MM-DD')
+              } else { // 不是本年，显示年月日
+                conversation.lastLetter.createTime = moment(conversation.lastLetter.createTime).format('YY-MM-DD')
+              }
+              console.log('格式化')
               return conversation
             })
             this.messageData = data
@@ -161,8 +174,17 @@ export default {
 .notice-icon {
   font-size: 30px;
 }
+.letter__bar{
+  width: 100%;
+  height: 25px;
+  line-height: 25px;
+  padding-left: 5px;
+  font-size: 13px;
+  font-weight: bolder;
+  border-bottom: 1px solid #f1f1f1;
+}
 .letter {
-  height: 84%;
+  height: calc(84% - 25px);
 }
 .el-scrollbar {
   height: 100%;
@@ -179,7 +201,7 @@ export default {
 }
 .letter-target {
   padding-top: 2px;
-  width: 90%;
+  width: 85%;
   display: inline-block;
   font-size: 16px !important;
   font-weight:bolder;
@@ -188,7 +210,7 @@ export default {
   text-overflow: ellipsis;  /*超出的部分用省略号替代*/
 }
 .letter-time {
-  width: 10%;
+  width: 15%;
   display: inline-block;
   font-size: 11px !important;
   font-weight:bolder;

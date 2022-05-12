@@ -79,7 +79,7 @@
     <!-- 显示关注的人 -->
     <el-drawer
     v-model="showFollowee"
-    title="👯我关注的人"
+    title="👯关注的人"
     :direction="direction" 
     size="100%" 
     :destroy-on-close="true"
@@ -93,19 +93,19 @@
                 <el-avatar :size="50" :src="followeeVo.user.headerUrl" style="margin: 3px;" />
               </el-col>
               <el-col :span="14" class="fansOrFollowNickname">
-                <span>{{ followeeVo.user.nickname }}</span>
+                <span class="nickname">{{ followeeVo.user.nickname }}</span>
                 <!-- 0-未知 1-男 2-女 -->
-                <span class="iconfont white-bolder-font" v-if="followeeVo.user.gender === 0" style="margin-left: 3px;padding: 3px;border-radius: 50%;background-color: #7a7a7a;">&#xe65e;</span>
-                <span class="iconfont white-bolder-font" v-else-if="followeeVo.user.gender === 1" style="margin-left: 3px;padding: 3px;border-radius: 50%;background-color: #00a9ff;">&#xe68d;</span>
-                <span class="iconfont white-bolder-font" v-else style="margin-left: 3px;padding: 3px;border-radius: 50%;background-color: #fb9b9b;">&#xe68b;</span>
+                <span class="iconfont white-bolder-font" v-if="followeeVo.user.gender === 0" style="position: relative;top: -5px;margin-left: 3px;padding: 3px;border-radius: 50%;background-color: #7a7a7a;">&#xe65e;</span>
+                <span class="iconfont white-bolder-font" v-else-if="followeeVo.user.gender === 1" style="position: relative;top: -5px;margin-left: 3px;padding: 3px;border-radius: 50%;background-color: #00a9ff;">&#xe68d;</span>
+                <span class="iconfont white-bolder-font" v-else style="position: relative;top: -5px;margin-left: 3px;padding: 3px;border-radius: 50%;background-color: #fb9b9b;">&#xe68b;</span>
               </el-col>
               <!-- 如果是当前用户自己, 就不显示任何内容 -->
               <el-col :span="6" style="text-align: center;" v-if="holderUserId !== followeeVo.user.id">
-                <el-button round class="user-info-button" v-if="followeeVo.hasFollowed">
-                  <span class="white-bolder-font" style="color: #333333b3;" @click="unFollowUser(followeeVo)">已关注</span>
+                <el-button round class="follow__button" v-if="followeeVo.hasFollowed">
+                  <span @click="unFollowUser(followeeVo)">已关注</span>
                 </el-button>
-                <el-button round class="user-info-button" v-else>
-                  <span class="white-bolder-font" @click="followUser(followeeVo)">关注</span>
+                <el-button type="primary" round class="follow__button" v-else>
+                  <span @click="followUser(followeeVo)">关注</span>
                 </el-button>
               </el-col>
             </el-row>
@@ -130,19 +130,19 @@
                 <el-avatar :size="50" :src="fansVo.user.headerUrl" style="margin: 3px;" />
               </el-col>
               <el-col :span="14" class="fansOrFollowNickname">
-                <span>{{ fansVo.user.nickname }}</span>
+                <span class="nickname">{{ fansVo.user.nickname }}</span>
                 <!-- 0-未知 1-男 2-女 -->
-                <span class="iconfont white-bolder-font" v-if="fansVo.user.gender === 0" style="margin-left: 3px;padding: 3px;border-radius: 50%;background-color: #7a7a7a;">&#xe65e;</span>
-                <span class="iconfont white-bolder-font" v-else-if="fansVo.user.gender === 1" style="margin-left: 3px;padding: 3px;border-radius: 50%;background-color: #00a9ff;">&#xe68d;</span>
-                <span class="iconfont white-bolder-font" v-else style="margin-left: 3px;padding: 3px;border-radius: 50%;background-color: #fb9b9b;">&#xe68b;</span>
+                <span class="iconfont white-bolder-font" v-if="fansVo.user.gender === 0" style="position: relative;top: -5px;margin-left: 3px;padding: 3px;border-radius: 50%;background-color: #7a7a7a;">&#xe65e;</span>
+                <span class="iconfont white-bolder-font" v-else-if="fansVo.user.gender === 1" style="position: relative;top: -5px;margin-left: 3px;padding: 3px;border-radius: 50%;background-color: #00a9ff;">&#xe68d;</span>
+                <span class="iconfont white-bolder-font" v-else style="position: relative;top: -5px;margin-left: 3px;padding: 3px;border-radius: 50%;background-color: #fb9b9b;">&#xe68b;</span>
               </el-col>
               <!-- 如果是当前用户自己, 就不显示任何内容 -->
               <el-col :span="6" style="text-align: center;" v-if="holderUserId !== fansVo.user.id">
-                <el-button round class="user-info-button" v-if="fansVo.hasFollowed">
-                  <span class="white-bolder-font" style="color: #333333b3;" @click="unFollowUser(fansVo)">已关注</span>
+                <el-button round class="follow__button" v-if="fansVo.hasFollowed">
+                  <span @click="unFollowUser(fansVo)">已关注</span>
                 </el-button>
-                <el-button round class="user-info-button" v-else>
-                  <span class="white-bolder-font" @click="followUser(fansVo)">关注</span>
+                <el-button type="primary" round class="follow__button" v-else>
+                  <span @click="followUser(fansVo)">关注</span>
                 </el-button>
               </el-col>
             </el-row>
@@ -409,10 +409,14 @@ export default {
   font-family:黑体;
   font-size: 20px;
   font-weight:bolder;
+  width: 100%;
+}
+.nickname{
+  display: inline-block;
+  max-width: 89%;
   white-space: nowrap;  /*限制一行内显示文本*/
   overflow: hidden;     /*隐藏超出的部分*/
   text-overflow: ellipsis;  /*超出的部分用省略号替代*/
-  width: 100%;
 }
 .fansOrFollowItem {
   height: 60px;
@@ -437,5 +441,12 @@ export default {
 }
 :deep(.el-tabs__active-bar) {
   background-color: #dca445;
+}
+.follow__button{
+  width: 65px;
+  height: 32px;
+  font-family:黑体;
+  font-size: 16px;
+  font-weight:bolder;
 }
 </style>
