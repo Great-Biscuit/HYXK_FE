@@ -12,6 +12,10 @@ import FindPassword from '../components/login/FindPassword.vue';
 import PostDetail from '../components/post/PostDetail.vue';
 import Search from '../components/search/Search.vue'
 import MessageHome from '../components/message/MessageHome.vue';
+import LikeNotice from '../components/message/LikeNotice.vue'
+import CollectNotice from '../components/message/CollectNotice.vue'
+import CommentNotice from '../components/message/CommentNotice.vue'
+import FollowNotice from '../components/message/FollowNotice.vue'
 import Chat from '../components/message/Chat.vue'
 import User from '../components/user/UserInfo.vue';
 import UpdateUserInfo from '../components/user/UpdateUserInfo.vue';
@@ -37,6 +41,10 @@ const routes = [
   { path: "/PostDetail/:id", component: PostDetail},
   { path: "/Search", component: Search},
   { path: "/MessageHome", component: MessageHome},
+  { path: "/LikeNotice", component: LikeNotice},
+  { path: "/CollectNotice", component: CollectNotice},
+  { path: "/CommentNotice", component: CommentNotice},
+  { path: "/FollowNotice", component: FollowNotice},
   { path: "/chat/:targetId", component: Chat},
   { path: "/User/:userId", component: User},
   { path: "/UpdateUserInfo", component: UpdateUserInfo},
