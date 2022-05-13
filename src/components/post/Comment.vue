@@ -6,7 +6,7 @@
       </div>
       <div class="middle">
         <span class="nickname">{{comment.user.nickname}}</span>
-        <p class="text" @click="handleCommentClick(2, comment.id, 0, comment.user.id)">{{comment.commentText}}</p>
+        <p class="text" @click="handleCommentClick(2, comment.id, 0, comment.user.id, comment.id)">{{comment.commentText}}</p>
         <span class="commentTime">{{comment.commentTime}}</span>
       </div>
       <div class="like">
@@ -20,13 +20,13 @@
       </div>
     </div>
     <div class="reply__wrapper" v-if="comment.replyVoList != null">
-      <div class="reply__item" v-for="(item, index) in comment.replyVoList" :key="item" v-show="tips === '收起' ? true : (index < 2)">
+      <div class="reply__item" v-for="(item, index) in comment.replyVoList" :key="item">
         <div class="reply__avatar">
           <el-avatar :size="30" :src="item?.user.headerUrl" @click="handleAvatarClick(item?.user.id)" />
         </div>
         <div class="reply__middle">
           <span class="user__nickname">{{item?.user.nickname}}</span>
-          <p><span class="reply__tip" v-if="item?.target != null">回复 <span class="target__nickname">{{item?.target.nickname}}</span>: </span><span class="text" @click="handleCommentClick(2, item.id, item.user.id, item.user.id)">{{item?.replyText}}</span></p>
+          <p><span class="reply__tip" v-if="item?.target != null">回复 <span class="target__nickname">{{item?.target.nickname}}</span>: </span><span class="text" @click="handleCommentClick(2, comment.id, item.user.id, item.user.id, item.id)">{{item?.replyText}}</span></p>
           <span class="replyTime">{{item?.replyTime}}</span>
         </div>
         <div class="reply__like">
@@ -159,8 +159,8 @@ export default {
       this.$router.push(`/user/${userId}`)
     },
     // 处理评论点击操作
-    handleCommentClick (entityType, entityId, targetId, clickedUser) {
-      this.$emit('handleCommentClick', entityType, entityId, targetId, clickedUser)
+    handleCommentClick (entityType, entityId, targetId, clickedUser, commentSelfId) {
+      this.$emit('handleCommentClick', entityType, entityId, targetId, clickedUser, commentSelfId)
     },
     // 点赞
     toLike (entityType, entityId, entityUserId) {

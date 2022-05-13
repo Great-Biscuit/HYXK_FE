@@ -324,20 +324,116 @@ export default {
     unFollowUser (entityVo) {
       if (entityVo === null) {
         // 为空则为对当前用户页显示的用户的操作
-        this.userInfo.hasFollow = false
+        let formData = new FormData()
+        formData.append('entityType', 3)
+        formData.append('entityId', this.userId)
+        post('/user/follow/unfollow', formData)
+        .then(response => {
+          if (response.code === 200) {
+            this.userInfo.hasFollow = false
+            this.userInfo.fansCount--
+          } else {
+            ElNotification({
+              title: "错误: " + response.code,
+              message: response.msg,
+              type: 'error',
+              duration: 2000,
+            })
+          }
+        })
+        .catch(() => {
+            ElNotification({
+              title: "错误",
+              message: "发生错误!",
+              type: 'error',
+              duration: 2000,
+            })
+        })
       } else {
         // 不为空则为对关注或粉丝列表中的用户的操作
-        entityVo.hasFollowed = false
+        let formData = new FormData()
+        formData.append('entityType', 3)
+        formData.append('entityId', entityVo.user.id)
+        post('/user/follow/unfollow', formData)
+        .then(response => {
+          if (response.code === 200) {
+            entityVo.hasFollowed = false
+          } else {
+            ElNotification({
+              title: "错误: " + response.code,
+              message: response.msg,
+              type: 'error',
+              duration: 2000,
+            })
+          }
+        })
+        .catch(() => {
+            ElNotification({
+              title: "错误",
+              message: "发生错误!",
+              type: 'error',
+              duration: 2000,
+            })
+        })
       }
     },
     // 关注
     followUser (entityVo) {
       if (entityVo === null) {
         // 为空则为对当前用户页显示的用户的操作
-        this.userInfo.hasFollow = true
+        let formData = new FormData()
+        formData.append('entityType', 3)
+        formData.append('entityId', this.userId)
+        formData.append('entityUserId', this.holderUserId)
+        post('/user/follow/toFollow', formData)
+        .then(response => {
+          if (response.code === 200) {
+            this.userInfo.hasFollow = true
+            this.userInfo.fansCount++
+          } else {
+            ElNotification({
+              title: "错误: " + response.code,
+              message: response.msg,
+              type: 'error',
+              duration: 2000,
+            })
+          }
+        })
+        .catch(() => {
+            ElNotification({
+              title: "错误",
+              message: "发生错误!",
+              type: 'error',
+              duration: 2000,
+            })
+        })
       } else {
         // 不为空则为对关注或粉丝列表中的用户的操作
-        entityVo.hasFollowed = true
+        let formData = new FormData()
+        formData.append('entityType', 3)
+        formData.append('entityId', entityVo.user.id)
+        formData.append('entityUserId', this.holderUserId)
+        post('/user/follow/toFollow', formData)
+        .then(response => {
+          if (response.code === 200) {
+            entityVo.hasFollowed = true
+          } else {
+            ElNotification({
+              title: "错误: " + response.code,
+              message: response.msg,
+              type: 'error',
+              duration: 2000,
+            })
+          }
+        })
+        .catch(() => {
+            ElNotification({
+              title: "错误",
+              message: "发生错误!",
+              type: 'error',
+              duration: 2000,
+            })
+        })
       }
     }
   }

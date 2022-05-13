@@ -92,7 +92,7 @@ export default {
       post('/user/login/verify', f)
         .then(response => {
           if (response.code === 200) {
-            this.$router.back()
+            this.$router.push({path: '/Home'})
           } else {
             ElNotification({
               title: "错误: " + response.code,

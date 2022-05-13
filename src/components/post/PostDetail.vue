@@ -1,5 +1,5 @@
 <template>
-  <div class="box">
+  <div class="box" v-loading="loading">
     <div class="head">
       <el-row :gutter="20">
         <el-col :span="3" v-on:click="this.$router.back()">
@@ -7,12 +7,12 @@
         </el-col>
         <el-col :span="18">帖子详情</el-col>
         <el-col :span="3">
-          <i class="iconfont" @click="openActionBox">&#xe612;</i>
+          <i class="iconfont" @click="openActionBox" v-if="holderId && postInfo && postInfo.author.id == holderId">&#xe612;</i>
         </el-col>
       </el-row>
     </div>
-    <el-scrollbar>
-      <div class="post-info" v-if="postInfo != null">
+    <el-scrollbar v-if="postInfo != null" >
+      <div class="post-info">
         <h2 style="margin: 10px;">{{ postInfo.post.title }}</h2>
         <div class="author">
           <el-avatar :size="39" :src="postInfo.author.headerUrl" @click="this.$router.push(`/User/${postInfo.author.id}`)" />
@@ -30,7 +30,7 @@
               {{ postInfo.likeCount }}
             </el-col>
             <el-col :span="3"><el-divider direction="vertical" /></el-col>
-            <el-col :span="6" v-on:click="handleCommentClick(1, postInfo.post.id, 0, null)">
+            <el-col :span="6" v-on:click="handleCommentClickOnPostHome(1, postInfo.post.id, 0)">
               <i class="iconfont">&#xe741;</i>
               {{ postInfo.post.comments }}
             </el-col>
@@ -89,6 +89,31 @@
         </el-col>
       </el-row>
     </el-drawer>
+    <!-- 作者专属评论操作 -->
+    <el-drawer
+    v-model="commentActionDrawerForAuthor"
+    :direction="direction" 
+    size="10%" 
+    :with-header="false"
+    >
+      <el-row>
+        <el-col :span="6" @click="setBestComment">
+          <span style="color: #b88230;">最佳</span>
+        </el-col>
+        <el-col :span="3">
+          <el-divider direction="vertical" />
+        </el-col>
+        <el-col :span="6" @click="openCommentBox">
+          <span style="color: #337ecc;">评论</span>
+        </el-col>
+        <el-col :span="3">
+          <el-divider direction="vertical" />
+        </el-col>
+        <el-col :span="6" @click="deleteComment">
+          <span style="color: red;">删除</span>
+        </el-col>
+      </el-row>
+    </el-drawer>
     <!-- 评论发布处 -->
     <el-drawer
     v-model="commentDrawer"
@@ -131,10 +156,13 @@ export default {
         entityType: null, 
         entityId: null, 
         targetId: null,
-        content: ''
+        content: '',
+        commentSelfId: null
       },
       commentActionDrawer: false,
       commentDrawer: false,
+      commentActionDrawerForAuthor: false,
+      loading: true,
     }
   },
   mounted () {
@@ -180,8 +208,10 @@ export default {
             } else { // 超过一年，显示年月日
               detail.post.createTime = moment(detail.post.createTime).format('YYYY-MM-DD')
             }
+            console.log(detail)
 
             this.postInfo = detail
+            this.loading = false
           } else {
             ElNotification({
               title: "错误: " + response.code,
@@ -269,7 +299,7 @@ export default {
       } else {
         formData.append('entityUserId', entityUserId)
         // 收藏
-        post('/post/follow/toFollow', formData)
+        post('/user/follow/toFollow', formData)
         .then(response => {
           if (response.code === 200) {
             this.postInfo.collectCount++
@@ -355,17 +385,29 @@ export default {
       this.$router.push({path: '/UpdatePost/' + this.postId})
     },
     // 处理评论点击操作
-    handleCommentClick (entityType, entityId, targetId, clickedUser) {
+    handleCommentClick (entityType, entityId, targetId, clickedUser, commentSelfId) {
       this.comment.content = ''
       this.comment.entityType = entityType
       this.comment.entityId = entityId
       this.comment.targetId = targetId
-      if (this.holderId === clickedUser) {
+      this.comment.commentSelfId = commentSelfId
+      if (this.postInfo.author.id == this.holderId) {
+        // 如果是帖子作者
+        this.commentActionDrawerForAuthor = true
+      } else if (this.holderId == clickedUser) {
         // 如果当前用户点击自己发出的评论, 就可能是要删除评论
         this.commentActionDrawer = true
       } else {
         this.commentDrawer = true
       }
+    },
+    // 处理评论图标点击操作
+    handleCommentClickOnPostHome (entityType, entityId, targetId) {
+      this.comment.content = ''
+      this.comment.entityType = entityType
+      this.comment.entityId = entityId
+      this.comment.targetId = targetId
+      this.commentDrawer = true
     },
     // 发送评论
     sendComment () {
@@ -408,12 +450,14 @@ export default {
     },
     // 打开评论发布处
     openCommentBox () {
+      this.commentActionDrawerForAuthor = false
       this.commentActionDrawer = false
       this.commentDrawer = true
     },
     deleteComment () {
       let formData = new FormData()
-      formData.append('commentId', this.comment.entityId)
+      formData.append('commentId', this.comment.commentSelfId)
+      formData.append('postId', this.postId)
       post('/post/comment/deleteComment', formData)
         .then(response => {
           if (response.code === 200) {
@@ -443,6 +487,40 @@ export default {
             })
         })
     },
+    setBestComment () {
+      // 设置最佳评论
+      let formData = new FormData()
+      formData.append('commentId', this.comment.commentSelfId)
+      formData.append('postId', this.postId)
+      post('/post/comment/setBestComment', formData)
+        .then(response => {
+          if (response.code === 200) {
+            ElNotification({
+              title: "成功",
+              message: "成功设置最佳评论!",
+              type: 'success',
+              duration: 2000,
+            })
+            // 刷新页面
+            this.$router.go(0)
+          } else {
+            ElNotification({
+              title: "错误: " + response.code,
+              message: response.msg,
+              type: 'error',
+              duration: 2000,
+            })
+          }
+        })
+        .catch(() => {
+            ElNotification({
+              title: "错误",
+              message: "发生错误!",
+              type: 'error',
+              duration: 2000,
+            })
+        })
+    }
   }
 }
 </script>
@@ -500,6 +578,9 @@ export default {
 }
 .comments {
   padding: 20px;
+}
+:deep(img){
+  width: 100% !important;
 }
 .comment-el-row {
   padding: 0;

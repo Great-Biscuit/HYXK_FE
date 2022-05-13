@@ -52,7 +52,7 @@
     <div class="under">
       <v-md-editor v-model="post.markdownContent" height="100%"
       left-toolbar="undo redo | bold italic table"
-      right-toolbar="image link emoji "
+      right-toolbar="image link"
       :disabled-menus="[]"
       @upload-image="handleUploadImage"
       ></v-md-editor>
@@ -126,7 +126,7 @@ export default {
   methods: {
     // 获取当前帖子信息
     getPostInfo (postId) {
-      post('/post/action/getPostForUpdate/' + postId)
+      get('/post/action/getPostForUpdate/' + postId)
         .then(response => {
           if (response.code === 200) {
             this.post = response.data
@@ -233,8 +233,6 @@ export default {
             insertImage({
               url: 'http://images.hyxk.xyz/' + response.key,
               desc: '图片',
-              width: 'auto',
-              height: 'auto',
             });
           } else {
             ElNotification({
@@ -260,7 +258,7 @@ export default {
       formData.append('id', this.post.id)
       formData.append('title', this.post.title)
       formData.append('markdownContent', this.post.markdownContent)
-      formData.append('headImg', this.post.headImg)
+      formData.append('headerUrl', this.post.headImg)
       formData.append('type', this.post.type)
       post('/post/action/updatePost', formData)
         .then(response => {

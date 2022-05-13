@@ -3,7 +3,7 @@ import router from "../router/router"
 
 // 创建axios实例
 const instance = axios.create({
-  baseURL: 'http://127.0.0.1:4523/mock/741820',
+  baseURL: 'http://127.0.0.1/hyxk',// 'http://127.0.0.1:4523/mock/741820',
   timeout: 10000 // 十秒就算请求超时
 })
 

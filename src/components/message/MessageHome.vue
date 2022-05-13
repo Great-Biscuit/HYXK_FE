@@ -1,5 +1,5 @@
 <template>
-  <div class="box">
+  <div class="box" v-loading="loading">
     <div class="head">
       <el-row :gutter="20" class="head-el-row">
         <el-col :span="3" v-on:click="toHome">
@@ -48,7 +48,7 @@
       </el-row>
     </div>
     <div style="width: 100%;height: 1%;background-color: #a5a5a524;"></div>
-    <div class="letter__bar">聊天列表</div>
+    <div class="letter__bar" v-if="messageData != null">聊天列表</div>
     <div class="letter" v-if="messageData != null">
       <el-empty description="没有私信哟~" v-if="messageData.conversationList === null || messageData.conversationList.length === 0" />
       <el-scrollbar v-else>
@@ -85,7 +85,8 @@ export default {
   },
   data () {
     return {
-      messageData: null
+      messageData: null,
+      loading: true
     }
   },
   mounted () {
@@ -118,6 +119,7 @@ export default {
               return conversation
             })
             this.messageData = data
+            this.loading = false
           } else {
             ElNotification({
               title: "错误: " + response.code,

@@ -25,7 +25,7 @@
       </div>
       <span :class="{'hasText': hasText, 'search__btn': true}" @click="handleSearchClick">搜索</span>
     </div>
-    <div class="main">
+    <div class="main" v-loading="loading">
       <el-empty description="没有搜索到相关内容" v-if="isEmpty" />
       <div v-else>
         <ul v-if="postList !== null && postList.length !== 0" v-infinite-scroll="load" class="infinite-list" style="overflow: auto">
@@ -56,6 +56,7 @@ export default {
       postList: [], // 帖子列表
       isEmpty: false, // 是否没有搜索到相关帖子
       current: 0,
+      loading: false,
     }
   },
   methods: {
@@ -73,6 +74,7 @@ export default {
       if (this.searchText === '') {
         return
       }
+      this.loading = true
       // 获取帖子列表
       this.postList = []
       this.current = 0
@@ -86,7 +88,7 @@ export default {
       formData.append('limit', 20)
       let postType = null
       if (this.type === '全部') {
-        postType = null
+        postType = -1
       } else if (this.type === '文章') {
         postType = 0
       } else if (this.type === '公告') {
@@ -108,6 +110,7 @@ export default {
             } else {
               this.isEmpty = false
             }
+            this.loading = false
           } else {
             ElNotification({
               title: "错误: " + response.code,

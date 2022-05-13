@@ -260,7 +260,7 @@ export default {
 
       let formData = new FormData()
       formData.append('email', this.registerForm.email)
-      post('/user/login/getVerificationCode', formData)
+      post('/user/register/getVerificationCode', formData)
         .then(response => {
           if (response.code === 200) {
             ElNotification({
@@ -292,6 +292,7 @@ export default {
       formData.append('username', this.registerForm.username)
       formData.append('password', this.registerForm.password)
       formData.append('email', this.registerForm.email)
+      formData.append('code', this.registerForm.code)
       post('/user/register/toRegister', formData)
         .then(response => {
           if (response.code === 200) {

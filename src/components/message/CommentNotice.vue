@@ -24,7 +24,7 @@
             <span class="notice__content">{{ item.content }}</span>
             <span class="notice__time">{{item.time}}</span>
           </div>
-          <div class="notice__right" v-if="item.targetEntity.headerImg && item.targetEntity.comment">
+          <div class="notice__right" v-if="item.targetEntity.headerImg || item.targetEntity.comment">
             <el-image style="width: 55px; height: 55px" :src="item.targetEntity.headerImg" fit="cover" v-if="item.targetEntity.headerImg"></el-image>
             <span class="notice__target" v-else>{{item.targetEntity.comment}}</span>
           </div>
