@@ -67,7 +67,9 @@ export default {
   methods: {
     // 获取聊天记录
     getChatList () {
-      post('/user/message/letter', { targetId: this.$route.params.targetId })
+      let formData = new FormData()
+      formData.append('targetId', this.$route.params.targetId)
+      post('/user/message/letter', formData)
         .then(response => {
           console.log('请求了')
           if (response.code === 200) {

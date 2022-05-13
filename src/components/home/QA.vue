@@ -3,7 +3,7 @@
     <el-header>
       <Header @openMenu="openMenu" headerName="问答"/>
     </el-header>
-    <el-main>
+    <el-main v-loading="loading">
       <el-tabs
         v-model="activeIndex"
         class="el-menu-demo"
@@ -71,6 +71,7 @@ export default {
       postList : [],
       drawer: false,
       direction: "ltr",
+      loading: true,
     }
   },
   mounted() {
@@ -78,18 +79,19 @@ export default {
   },
   methods: {
     load () {
-      let formData = new FormData()
-      formData.append('userId', 0)
-      formData.append('type', 2)
-      formData.append('offset', this.count)
-      formData.append('limit', 30)
-      formData.append('orderMode', this.activeIndex)
-      post('/post-public/queryAllByLimit', formData)
+      post('/post-public/queryAllByLimit', {
+        userId: 0,
+        type: 2,
+        offset: this.count,
+        limit: 10,
+        orderMode: this.activeIndex
+      })
         .then(response => {
           if (response.code === 200) {
             // 每次取8条
             this.postList.push(...response.data);
             this.count += response.data.length;
+            this.loading = false
           } else {
             ElNotification({
               title: "错误: " + response.code,

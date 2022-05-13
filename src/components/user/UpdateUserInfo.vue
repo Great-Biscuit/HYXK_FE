@@ -136,7 +136,12 @@ export default {
     },
     updateUserInfo () {
       // 修改用户信息
-      post('/user/action/updateInfo', this.user)
+      let formData = new FormData()
+      formData.append('headerUrl', this.user.headerUrl)
+      formData.append('nickname', this.user.nickname)
+      formData.append('gender', this.user.gender)
+      formData.append('signature', this.user.signature)
+      post('/user/action/updateInfo', formData)
         .then(response => {
           if (response.code === 200) {
             ElNotification({

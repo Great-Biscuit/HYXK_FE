@@ -1,5 +1,5 @@
 <template>
-  <div class="post-list-box" v-if="postList!==null">
+  <div class="post-list-box" v-if="postList!==null" v-loading="loading">
     <ul v-infinite-scroll="load" class="infinite-list" style="overflow: auto">
       <li v-for="postVo in postList" :key="postVo" class="infinite-list-item">
         <PostIntroForUserInfo :postVo="postVo" />
@@ -25,23 +25,25 @@ export default {
   data () {
     return {
       count : 0,
-      postList: []
+      postList: [],
+      loading: true
     }
   },
   methods: {
     load () {
-      let formData = new FormData()
-      formData.append('userId', this.userId)
-      formData.append('type', 0)
-      formData.append('offset', this.count)
-      formData.append('limit', 8)
-      formData.append('orderMode', -1)
-      post('/post-public/queryAllByLimit', formData)
+      post('/post-public/queryAllByLimit', {
+        userId: this.userId,
+        type: -1,
+        offset: this.count,
+        limit: 10,
+        orderMode: 2
+      })
         .then(response => {
           if (response.code === 200) {
             // 每次取8条
             this.postList.push(...response.data);
             this.count += response.data.length;
+            this.loading = false
           } else {
             ElNotification({
               title: "错误: " + response.code,
